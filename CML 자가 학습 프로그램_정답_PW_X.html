@@ -170,6 +170,18 @@
     letter-spacing: 0.5px;
   }
   .box-col{display:flex;flex-direction:column;}
+  .logpageno .box-col {
+    width: 150px;
+  }
+  .logpageno input.field {
+    width: 80px;
+  }
+  .date-box .box-col {
+    width: 230px;
+  }
+  .date-box input.field {
+    width: 150px;
+  }
   .box-body{
     display:flex;
     align-items:center;
@@ -419,8 +431,59 @@
 
   @media (max-width:900px){
     .doc-head{
-      flex-direction:column;
-      align-items:flex-start;
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: wrap !important;
+      gap: 8px !important;
+      align-items: center !important;
+    }
+    body .doc-head .doc-title {
+      font-size: 16px !important;
+      width: 100% !important;
+      margin-bottom: 4px !important;
+    }
+    .box-group {
+      flex-shrink: 0 !important;
+    }
+    body .doc-head .logpageno .box-col {
+      width: 110px !important;
+    }
+    body .doc-head .logpageno input.field {
+      width: 54px !important;
+      font-size: 11px !important;
+      padding: 4px 6px !important;
+    }
+    body .doc-head .logpageno .c-mark {
+      font-size: 13px !important;
+    }
+    body .doc-head .logpageno .label {
+      font-size: 8px !important;
+      padding: 3px 5px !important;
+    }
+    body .doc-head .hl-box .hl-label {
+      padding: 0 8px !important;
+      font-size: 12px !important;
+    }
+    body .doc-head .hl-box .hl-input {
+      width: 50px !important;
+      font-size: 11px !important;
+      padding: 4px 6px !important;
+    }
+    body .doc-head .date-box .box-col {
+      width: 150px !important;
+    }
+    body .doc-head .date-box input.field {
+      width: 100px !important;
+      font-size: 11px !important;
+      padding: 4px 6px !important;
+    }
+    body .doc-head .date-box .label {
+      font-size: 8px !important;
+      padding: 3px 5px !important;
+    }
+    body .doc-head .box-group .label {
+      font-size: 8px !important;
+      padding: 3px 5px !important;
     }
     .line-row{flex-wrap:wrap;}
     .line-row .prompt{flex:1 1 100%;}
@@ -862,11 +925,11 @@
       <div class="doc-title">CABIN MAINTENANCE&nbsp;LOG</div>
 
       <div class="box-group logpageno">
-        <div class="box-col" style="width:150px;">
+        <div class="box-col">
           <div class="label">LOG PAGE NO</div>
           <div class="box-body">
             <span class="c-mark">C</span>
-            <input class="field" value="123456" disabled style="width:80px;">
+            <input class="field" value="123456" disabled>
           </div>
         </div>
       </div>
@@ -878,8 +941,8 @@
         </div>
       </div>
 
-      <div class="box-group">
-        <div class="box-col" style="width:230px;">
+      <div class="box-group date-box">
+        <div class="box-col">
           <div class="label">DATE(DD-MMM-YY)</div>
           <div class="box-body">
             <input type="text" class="field date-input validate" data-type="date" maxlength="9">
