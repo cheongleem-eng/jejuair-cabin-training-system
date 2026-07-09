@@ -82,6 +82,8 @@
     align-items:center;
     justify-content:center;
     gap:6px;
+    white-space:nowrap;
+    flex-shrink:0;
   }
   .btn:hover{
     transform:translateY(-1px);
@@ -155,6 +157,7 @@
     border-radius:4px;
     overflow:hidden;
     background:#fff;
+    flex-shrink:0;
   }
   .box-group .label{
     background:var(--header-blue);
@@ -415,9 +418,19 @@
   }
 
   @media (max-width:900px){
-    .doc-head{flex-direction:column;}
+    .doc-head{
+      flex-direction:column;
+      align-items:flex-start;
+    }
     .line-row{flex-wrap:wrap;}
     .line-row .prompt{flex:1 1 100%;}
+    .btn {
+      padding: 6px 12px;
+      font-size: 11px;
+    }
+    .toolbar h2 {
+      font-size: 15px;
+    }
   }
   /* ---- 랜덤 문제 풀기 패널 ---- */
   .quiz-panel{
@@ -646,6 +659,140 @@
     0%, 100% { opacity: 0.3; transform: scale(0.98); }
     50% { opacity: 0.8; transform: scale(1.02); }
   }
+
+  /* ---- CML Sizing & Font controls ---- */
+  .cml-settings-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FF5000, #ff7b39);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 15px rgba(255, 80, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 990;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .cml-settings-btn:hover {
+    transform: scale(1.08) rotate(30deg);
+    box-shadow: 0 6px 20px rgba(255, 80, 0, 0.5);
+  }
+  .cml-settings-btn:active {
+    transform: scale(0.95);
+  }
+  .cml-settings-panel {
+    position: fixed;
+    bottom: 86px;
+    right: 24px;
+    width: 280px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+    z-index: 989;
+    display: none;
+    flex-direction: column;
+    gap: 14px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+  }
+  .cml-settings-panel.open {
+    display: flex;
+  }
+  .cml-settings-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 800;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 8px;
+  }
+  .cml-settings-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .cml-settings-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #475569;
+    display: flex;
+    justify-content: space-between;
+  }
+  .cml-settings-value {
+    font-weight: 800;
+    color: #FF5000;
+  }
+  .cml-settings-ctrls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .cml-settings-ctrls button {
+    flex: 1;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: #334155;
+  }
+  .cml-settings-ctrls button:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+  }
+  .cml-settings-ctrls button:active {
+    transform: scale(0.95);
+  }
+  .cml-settings-fit-btn {
+    width: 100%;
+    background: #1e40af;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    box-shadow: 0 4px 10px rgba(30, 64, 175, 0.15);
+  }
+  .cml-settings-fit-btn:hover {
+    background: #1d4ed8;
+    box-shadow: 0 6px 14px rgba(30, 64, 175, 0.25);
+  }
+  .cml-settings-reset-btn {
+    width: 100%;
+    background: #fff;
+    color: #64748b;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .cml-settings-reset-btn:hover {
+    background: #f8fafc;
+    color: #334155;
+  }
 </style>
 </head>
 <body>
@@ -675,11 +822,11 @@
 <div class="wrap">
 
   <div class="toolbar">
-    <h2>✈️ CABIN MAINTENANCE LOG 작성 연습</h2>
+    <h2>CABIN MAINTENANCE LOG 작성 연습</h2>
     <div class="score">점수: <span class="num" id="scoreNum">0 / 0</span></div>
     <div style="display:flex; gap:8px; align-items:center;">
-      <a id="guideLink" href="#" target="_blank" rel="noopener" class="btn btn-ghost" style="text-decoration:none; display:inline-flex; align-items:center;">📘 CML 작성 GUIDE</a>
-      <button class="btn btn-ghost" id="quizOpenBtn">🎲 랜덤 문제 풀기</button>
+      <a id="guideLink" href="#" target="_blank" rel="noopener" class="btn btn-ghost" style="text-decoration:none; display:inline-flex; align-items:center;">CML 작성 가이드</a>
+      <button class="btn btn-ghost" id="quizOpenBtn">랜덤 문제</button>
       <button class="btn btn-primary" id="checkBtn">채점하기</button>
       <button class="btn btn-ghost" id="resetBtn">다시 풀기</button>
     </div>
@@ -1720,6 +1867,176 @@ document.getElementById('quizAnswerBtn').addEventListener('click', ()=>{
   }
   const guideBlobUrl = base64ToBlobUrl(CML_GUIDE_PDF_BASE64, 'application/pdf');
   document.getElementById('guideLink').href = guideBlobUrl;
-</script>
+  
+  <button class="cml-settings-btn" id="cmlSettingsBtn" title="화면/글씨 조절">
+    <i class="ph-bold ph-gear" style="display:inline-block; font-style:normal; font-variant:normal; text-rendering:auto; -webkit-font-smoothing:antialiased;">⚙️</i>
+  </button>
+
+  <div class="cml-settings-panel" id="cmlSettingsPanel">
+    <h3 class="cml-settings-title">⚙️ CML 화면 & 글씨 설정</h3>
+    
+    <div class="cml-settings-row">
+      <div class="cml-settings-label">
+        <span>화면 크기 (배율)</span>
+        <span class="cml-settings-value" id="cmlZoomVal">100%</span>
+      </div>
+      <div class="cml-settings-ctrls">
+        <button id="zoomOutBtn">배율 -</button>
+        <button id="zoomInBtn">배율 +</button>
+      </div>
+      <button class="cml-settings-fit-btn" id="autoFitBtn">📱 기기 가로 폭에 맞춤</button>
+    </div>
+
+    <div class="cml-settings-row">
+      <div class="cml-settings-label">
+        <span>글씨 크기 (Text)</span>
+        <span class="cml-settings-value" id="cmlFontVal">100%</span>
+      </div>
+      <div class="cml-settings-ctrls">
+        <button id="fontOutBtn">글씨 -</button>
+        <button id="fontInBtn">글씨 +</button>
+      </div>
+    </div>
+
+    <button class="cml-settings-reset-btn" id="settingsResetBtn">초기화 (Reset)</button>
+  </div>
+
+  <script>
+    (function() {
+      let currentZoom = 1.0;
+      let currentFontScale = 1.0;
+      
+      const wrapEl = document.querySelector('.wrap');
+      const zoomValEl = document.getElementById('cmlZoomVal');
+      const fontValEl = document.getElementById('cmlFontVal');
+      const panelEl = document.getElementById('cmlSettingsPanel');
+      const btnEl = document.getElementById('cmlSettingsBtn');
+
+      // 1. Zoom Logic
+      function setZoom(val) {
+        currentZoom = Math.max(0.35, Math.min(1.5, Math.round(val * 100) / 100));
+        if (wrapEl) {
+          wrapEl.style.zoom = currentZoom;
+        }
+        if (zoomValEl) {
+          zoomValEl.textContent = Math.round(currentZoom * 100) + '%';
+        }
+        localStorage.setItem('cml_zoom_scale', currentZoom);
+      }
+
+      // 2. Font Scale Logic
+      function setFontScale(val) {
+        currentFontScale = Math.max(0.7, Math.min(1.5, Math.round(val * 100) / 100));
+        if (fontValEl) {
+          fontValEl.textContent = Math.round(currentFontScale * 100) + '%';
+        }
+        localStorage.setItem('cml_font_scale', currentFontScale);
+
+        let styleTag = document.getElementById('cml-dynamic-font-style');
+        if (!styleTag) {
+          styleTag = document.createElement('style');
+          styleTag.id = 'cml-dynamic-font-style';
+          document.head.appendChild(styleTag);
+        }
+        styleTag.textContent = `
+          .toolbar h2 { font-size: ${17 * currentFontScale}px !important; }
+          .toolbar .score { font-size: ${13 * currentFontScale}px !important; }
+          .toolbar .score .num { font-size: ${18 * currentFontScale}px !important; }
+          .btn { font-size: ${13.5 * currentFontScale}px !important; }
+          .note { font-size: ${13 * currentFontScale}px !important; }
+          .doc-title { font-size: ${24 * currentFontScale}px !important; }
+          .box-group .label { font-size: ${10 * currentFontScale}px !important; }
+          .logpageno .c-mark { font-size: ${18 * currentFontScale}px !important; }
+          input.field { font-size: ${14 * currentFontScale}px !important; }
+          .hl-label { font-size: ${15 * currentFontScale}px !important; }
+          .num-grid div { font-size: ${13 * currentFontScale}px !important; }
+          .num-grid div .xmark { font-size: ${22 * currentFontScale}px !important; }
+          table.main th { font-size: ${11 * currentFontScale}px !important; }
+          table.main td { font-size: ${12 * currentFontScale}px !important; }
+          textarea.mal-area { font-size: ${13 * currentFontScale}px !important; }
+          .line-row .qno { font-size: ${11 * currentFontScale}px !important; }
+          .line-row .prompt { font-size: ${12 * currentFontScale}px !important; }
+          .mark { font-size: ${14 * currentFontScale}px !important; }
+          .disabled-tag { font-size: ${10 * currentFontScale}px !important; }
+          footer.formno { font-size: ${11 * currentFontScale}px !important; }
+          .quiz-panel-head h3 { font-size: ${16 * currentFontScale}px !important; }
+          .quiz-row { font-size: ${13.5 * currentFontScale}px !important; }
+          .quiz-score { font-size: ${13 * currentFontScale}px !important; }
+          .quiz-answers .quiz-row { font-size: ${13 * currentFontScale}px !important; }
+        `;
+      }
+
+      // 3. Auto Fit Logic
+      function autoFit() {
+        const targetWidth = 1200;
+        const currentWidth = window.innerWidth;
+        if (currentWidth < targetWidth) {
+          let fitScale = currentWidth / targetWidth;
+          setZoom(fitScale);
+        } else {
+          setZoom(1.0);
+        }
+      }
+
+      // 4. Initialize Settings from localStorage or Auto-Fit
+      const storedZoom = localStorage.getItem('cml_zoom_scale');
+      const storedFont = localStorage.getItem('cml_font_scale');
+
+      if (storedZoom) {
+        setZoom(parseFloat(storedZoom));
+      } else {
+        // Run auto-fit on load if screen is small (mobile)
+        if (window.innerWidth < 1000) {
+          autoFit();
+        } else {
+          setZoom(1.0);
+        }
+      }
+
+      if (storedFont) {
+        setFontScale(parseFloat(storedFont));
+      } else {
+        setFontScale(1.0);
+      }
+
+      // 5. Button Listeners
+      btnEl.addEventListener('click', function(e) {
+        e.stopPropagation();
+        panelEl.classList.toggle('open');
+      });
+
+      document.addEventListener('click', function(e) {
+        if (!panelEl.contains(e.target) && e.target !== btnEl) {
+          panelEl.classList.remove('open');
+        }
+      });
+
+      document.getElementById('zoomOutBtn').addEventListener('click', () => setZoom(currentZoom - 0.05));
+      document.getElementById('zoomInBtn').addEventListener('click', () => setZoom(currentZoom + 0.05));
+      document.getElementById('autoFitBtn').addEventListener('click', autoFit);
+
+      document.getElementById('fontOutBtn').addEventListener('click', () => setFontScale(currentFontScale - 0.05));
+      document.getElementById('fontInBtn').addEventListener('click', () => setFontScale(currentFontScale + 0.05));
+
+      document.getElementById('settingsResetBtn').addEventListener('click', () => {
+        setZoom(1.0);
+        setFontScale(1.0);
+      });
+      
+      // Auto-fit on window resize (to handle orientation change)
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          // Only auto-fit on resize if user has not explicitly set a zoom, 
+          // or if they click the auto-fit button.
+          if (!localStorage.getItem('cml_zoom_scale') && window.innerWidth < 1000) {
+            autoFit();
+          }
+        }, 200);
+      });
+
+    })();
+  </script>
 </body>
 </html>
