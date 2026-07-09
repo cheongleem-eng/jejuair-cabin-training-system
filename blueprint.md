@@ -25,7 +25,7 @@
 
 ## 3. 현재 작업 계획 (Current Task Plan)
 
-### 목표: CML 모듈 모바일 화면/글씨 크기 조절 기능 추가 (Add Zoom and Font Size Controls to CML Module) - 계획 중 (In Progress)
+### 목표: CML 모듈 모바일 화면/글씨 크기 조절 및 가이드 모달 개선 - 완료 (Completed)
 - **크기 조절 (Zoom/Scale)**: CML 화면 내 `.wrap` 컨테이너에 CSS `zoom` 속성을 동적으로 대입하여 전체적인 로그북 레이아웃의 배율 조절(35% ~ 150%) 기능 구현.
 - **글씨 조절 (Font Size)**: 레이아웃 배율과 별개로 주요 텍스트 요소(입력 필드, 테이블 셀, 가이드 노트 등)의 폰트 크기만 비례적으로 확대/축소(70% ~ 150%)할 수 있는 동적 스타일시트 적용 기능 구현.
 - **모바일 자동 최적화 (Auto Fit)**: 모바일 기기(너비 1000px 미만)로 접속 시, 기기 가로 너비에 맞게 자동으로 최적의 배율을 계산하여 화면에 가득 차도록 맞춰주는 자동 조절(Auto-Fit) 기능 구현.
@@ -34,6 +34,11 @@
   - 화면 우측 하단에 미려한 플로팅 설정 버튼(⚙️ 아이콘) 및 반투명(Glassmorphic) 컨트롤 패널 UI 제공.
   - 헤더 제목 비행기 이모티콘(`✈️`) 제거, 📘 및 🎲 이모티콘 제거 및 영문 텍스트 한글화 (`CML 작성 가이드`, `랜덤 문제`).
   - 아이폰 등 좁은 뷰포트에서 버튼 텍스트가 세로로 쪼개지는 현상 방지 (`white-space: nowrap`, 모바일 크기 대폭 축소) 및 **LOG PAGE NO** 등 상단 정보 영역의 가로 짤림 방지 (`flex-shrink: 0`, 모바일 정렬 개선).
+- **CML 가로배치 모바일 최적화**: 모바일 세로 레이아웃에서 LOG PAGE NO, HL, DATE 박스들이 길게 세로로 나열되던 현상을 가로 한 줄(Row, wrap 허용) 정렬로 개선하고 컴팩트하게 리사이징.
+- **CML 작성 가이드 모달 팝업 구현**:
+  - 기존의 PDF Blob 다운로드 방식 대신, Mozilla `PDF.js` 라이브러리를 CDN에서 동적 로드하여 Base64 가이드 리소스를 모달 팝업 내 `<canvas>`에 직접 페이지별 인라인 렌더링.
+  - Glassmorphic 블러 처리된 세련된 배경 위에 이전(◀), 다음(▶) 버튼을 탑재하여 슬라이드 넘김 효과 연출.
+  - 돋보기 줌인/줌아웃(🔍 +, 🔍 -) 기능을 기본 탑재하여 작은 스마트폰 화면에서도 디테일한 항목 조작이 용이하도록 UX 대폭 증대.
 
 ### 목표: 통합 포털 5가지 메뉴 아이콘(이모티콘) 및 디자인 조화 개선 (Portal Menu Icons & Style Harmonization) - 완료 (Completed)
 - 5가지 메뉴의 아이콘을 각 기능에 부합하고 통일감 있는 Phosphor Fill 아이콘으로 일원화 (PRAM: Megaphone, Interphone: Phone Call, CML: Wrench, Emergency Role-Playing: Siren, Open Chat: Chats Circle).
