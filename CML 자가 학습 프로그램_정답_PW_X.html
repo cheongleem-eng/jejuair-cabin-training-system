@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 <title>CABIN MAINTENANCE LOG 자가학습</title>
 <style>
   :root{
@@ -855,6 +856,136 @@
   .cml-settings-reset-btn:hover {
     background: #f8fafc;
     color: #334155;
+  }
+  
+  /* ---- CML Guide PDF Modal ---- */
+  .guide-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10005;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .guide-modal-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .guide-modal-box {
+    width: 90%;
+    max-width: 800px;
+    height: 85%;
+    max-height: 85vh;
+    background: #ffffff;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .guide-modal-overlay.open .guide-modal-box {
+    transform: scale(1);
+  }
+  .guide-modal-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8fafc;
+  }
+  .guide-modal-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+  }
+  .guide-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #94a3b8;
+    transition: color 0.15s;
+    line-height: 1;
+  }
+  .guide-modal-close:hover {
+    color: #ef4444;
+  }
+  .guide-modal-body {
+    flex: 1;
+    padding: 20px;
+    overflow: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background: #f1f5f9;
+  }
+  .canvas-wrapper {
+    max-width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    background: #fff;
+    overflow: hidden;
+  }
+  #guideCanvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+  .guide-modal-footer {
+    padding: 12px 20px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+  }
+  .guide-zoom-controls {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .guide-zoom-controls button {
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .guide-zoom-controls button:hover {
+    background: #e2e8f0;
+  }
+  .guide-page-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .guide-page-controls button {
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 6px;
+  }
+  #pageNumText {
+    font-size: 14px;
+    font-weight: 700;
+    color: #475569;
   }
 </style>
 </head>
@@ -1929,11 +2060,181 @@ document.getElementById('quizAnswerBtn').addEventListener('click', ()=>{
     return URL.createObjectURL(blob);
   }
   const guideBlobUrl = base64ToBlobUrl(CML_GUIDE_PDF_BASE64, 'application/pdf');
-  document.getElementById('guideLink').href = guideBlobUrl;
-  
+  // Open modal instead of setting href
+  (function() {
+    const overlay = document.getElementById('guideModalOverlay');
+    const closeBtn = document.getElementById('guideModalCloseBtn');
+    const linkBtn = document.getElementById('guideLink');
+    const canvas = document.getElementById('guideCanvas');
+    const ctx = canvas.getContext('2d');
+    const pageNumText = document.getElementById('pageNumText');
+    
+    let pdfDoc = null;
+    let pageNum = 1;
+    let pageRendering = false;
+    let pageNumPending = null;
+    let currentPdfScale = 1.0;
+
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    }
+
+    function getPdfData() {
+      const raw = window.atob(CML_GUIDE_PDF_BASE64);
+      const rawLength = raw.length;
+      const array = new Uint8Array(new ArrayBuffer(rawLength));
+      for(let i = 0; i < rawLength; i++) {
+        array[i] = raw.charCodeAt(i);
+      }
+      return array;
+    }
+
+    function renderPage(num) {
+      if (!pdfDoc) return;
+      pageRendering = true;
+      
+      pdfDoc.getPage(num).then(page => {
+        const bodyEl = document.querySelector('.guide-modal-body');
+        const containerWidth = (bodyEl ? bodyEl.clientWidth : 760) - 40;
+        const unscaledViewport = page.getViewport({ scale: 1.0 });
+        
+        let pageScale = (containerWidth / unscaledViewport.width) * currentPdfScale;
+        
+        const viewport = page.getViewport({ scale: pageScale });
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        const renderContext = {
+          canvasContext: ctx,
+          viewport: viewport
+        };
+        const renderTask = page.render(renderContext);
+
+        renderTask.promise.then(() => {
+          pageRendering = false;
+          if (pageNumPending !== null) {
+            renderPage(pageNumPending);
+            pageNumPending = null;
+          }
+        });
+      }).catch(err => {
+        console.error('Error rendering PDF page:', err);
+        pageRendering = false;
+      });
+
+      pageNumText.textContent = num + ' / ' + pdfDoc.numPages;
+    }
+
+    function queueRenderPage(num) {
+      if (pageRendering) {
+        pageNumPending = num;
+      } else {
+        renderPage(num);
+      }
+    }
+
+    function loadPdf() {
+      if (pdfDoc) return Promise.resolve(pdfDoc);
+      
+      const data = getPdfData();
+      return pdfjsLib.getDocument({ data: data }).promise.then(pdf => {
+        pdfDoc = pdf;
+        pageNum = 1;
+        return pdf;
+      }).catch(err => {
+        console.error('Error loading PDF document:', err);
+      });
+    }
+
+    if (linkBtn) {
+      linkBtn.removeAttribute('target');
+      linkBtn.removeAttribute('href');
+      linkBtn.style.cursor = 'pointer';
+      
+      linkBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        overlay.classList.add('open');
+        loadPdf().then(() => {
+          renderPage(pageNum);
+        });
+      });
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        overlay.classList.remove('open');
+      });
+    }
+
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        overlay.classList.remove('open');
+      }
+    });
+
+    document.getElementById('guidePrevBtn').addEventListener('click', () => {
+      if (!pdfDoc || pageNum <= 1) return;
+      pageNum--;
+      queueRenderPage(pageNum);
+    });
+
+    document.getElementById('guideNextBtn').addEventListener('click', () => {
+      if (!pdfDoc || pageNum >= pdfDoc.numPages) return;
+      pageNum++;
+      queueRenderPage(pageNum);
+    });
+
+    document.getElementById('guideZoomInBtn').addEventListener('click', () => {
+      currentPdfScale += 0.15;
+      queueRenderPage(pageNum);
+    });
+
+    document.getElementById('guideZoomOutBtn').addEventListener('click', () => {
+      currentPdfScale = Math.max(0.5, currentPdfScale - 0.15);
+      queueRenderPage(pageNum);
+    });
+
+    let renderTimeout;
+    window.addEventListener('resize', () => {
+      if (overlay.classList.contains('open') && pdfDoc) {
+        clearTimeout(renderTimeout);
+        renderTimeout = setTimeout(() => {
+          renderPage(pageNum);
+        }, 150);
+      }
+    });
+  })();
+</script>
+
   <button class="cml-settings-btn" id="cmlSettingsBtn" title="화면/글씨 조절">
     <i class="ph-bold ph-gear" style="display:inline-block; font-style:normal; font-variant:normal; text-rendering:auto; -webkit-font-smoothing:antialiased;">⚙️</i>
   </button>
+
+  <!-- CML Guide PDF Modal Overlay -->
+  <div class="guide-modal-overlay" id="guideModalOverlay">
+    <div class="guide-modal-box">
+      <div class="guide-modal-header">
+        <h3>CML 작성 가이드</h3>
+        <button class="guide-modal-close" id="guideModalCloseBtn">&times;</button>
+      </div>
+      <div class="guide-modal-body">
+        <div class="canvas-wrapper">
+          <canvas id="guideCanvas"></canvas>
+        </div>
+      </div>
+      <div class="guide-modal-footer">
+        <div class="guide-zoom-controls">
+          <button id="guideZoomOutBtn" title="축소">🔍 -</button>
+          <button id="guideZoomInBtn" title="확대">🔍 +</button>
+        </div>
+        <div class="guide-page-controls">
+          <button class="btn btn-ghost" id="guidePrevBtn" style="min-width: 80px; padding: 6px 12px; font-size: 12px;">이전</button>
+          <span id="pageNumText">1 / 2</span>
+          <button class="btn btn-ghost" id="guideNextBtn" style="min-width: 80px; padding: 6px 12px; font-size: 12px;">다음</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="cml-settings-panel" id="cmlSettingsPanel">
     <h3 class="cml-settings-title">⚙️ CML 화면 & 글씨 설정</h3>
