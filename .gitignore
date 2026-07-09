@@ -1,0 +1,10 @@
+# Scratch files
+scratch_query.py
+scratch_query.js
+
+# Temp and OS metadata files
+*.tmp
+~$*
+.DS_Store
+Thumbs.db
+desktop.ini

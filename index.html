@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>제주항공 객실훈련팀 통합포털</title>
+  <link rel="stylesheet" href="style.css?v=6.0" />
+  <!-- 🔥 Firebase SDK (compat version — Firebase Studio 호환) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <!-- SheetJS for Excel Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    /* 잠금 화면 활성화 시 브라우저 기본 제스처 차단 */
+    body.lock-active {
+      touch-action: none;
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body class="lock-active">
+
+  <!-- ===================== PATTERN LOCK SCREEN ===================== -->
+  <div id="screen-lock" class="screen active">
+    <div class="lock-wrapper">
+      <div class="lock-header">
+        <img src="LOGO.png" alt="제주항공 로고" class="lock-logo">
+        <p class="lock-title">Cabin Training System</p>
+        <p class="lock-hint">시스템 접근을 위해 암호를 입력하세요</p>
+      </div>
+      <div id="pattern-container"></div>
+      <div class="lock-footer">
+        <p>© JEJU AIR Cabin Training Team</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== PORTAL SCREEN (START) ===================== -->
+  <div id="screen-portal" class="screen">
+    <div class="portal-wrapper">
+      <div class="portal-header">
+        <img src="LOGO.png" alt="제주항공 로고" class="portal-logo">
+        <p class="portal-subtitle">Cabin Training System</p>
+        <h1 class="portal-title">통합 교육 포털</h1>
+      </div>
+
+      <div class="portal-container">
+        <!-- Module 1: PRAM -->
+        <div class="portal-card" onclick="showModule('pram')">
+          <div class="card-icon-wrap">
+            <i class="ph-fill ph-megaphone"></i>
+          </div>
+          <div class="card-info">
+            <h3 class="card-title">737-800/8 PRAM</h3>
+            <p class="card-desc">방송 시스템 작동 및 시나리오 학습</p>
+          </div>
+          <div class="card-arrow">
+            <i class="ph ph-caret-right"></i>
+          </div>
+        </div>
+
+        <!-- Module 2: Interphone -->
+        <div class="portal-card" onclick="showModule('interphone')">
+          <div class="card-icon-wrap">
+            <i class="ph-fill ph-phone-call"></i>
+          </div>
+          <div class="card-info">
+            <h3 class="card-title">737-800/8 Interphone</h3>
+            <p class="card-desc">기내 인터폰 시스템 사용법 학습</p>
+          </div>
+          <div class="card-arrow">
+            <i class="ph ph-caret-right"></i>
+          </div>
+        </div>
+
+        <!-- New Module: CML -->
+        <div class="portal-card" onclick="showModule('cml')">
+          <div class="card-icon-wrap">
+            <i class="ph-fill ph-wrench"></i>
+          </div>
+          <div class="card-info">
+            <h3 class="card-title">737-800/8 CML</h3>
+            <p class="card-desc">기내 정비사항 기록 및 확인</p>
+          </div>
+          <div class="card-arrow">
+            <i class="ph ph-caret-right"></i>
+          </div>
+        </div>
+
+        <!-- Module 3: Role-playing -->
+        <div class="portal-card" onclick="showModule('login')">
+          <div class="card-icon-wrap">
+            <i class="ph-fill ph-siren"></i>
+          </div>
+          <div class="card-info">
+            <h3 class="card-title">Emergency Role-Playing</h3>
+            <p class="card-desc">비상상황 대응 평가 및 훈련 시스템</p>
+          </div>
+          <div class="card-arrow">
+            <i class="ph ph-caret-right"></i>
+          </div>
+        </div>
+
+        <!-- Module 4: Real-time Chat -->
+        <div class="portal-card" onclick="showModule('chat-lobby')">
+          <div class="card-icon-wrap">
+            <i class="ph-fill ph-chats-circle"></i>
+          </div>
+          <div class="card-info">
+            <h3 class="card-title">Open Chat</h3>
+            <p class="card-desc">실시간 정보 공유 및 소통 창구</p>
+          </div>
+          <div class="card-arrow">
+            <i class="ph ph-caret-right"></i>
+          </div>
+        </div>
+      </div>
+      
+      <div class="portal-footer">
+        <p>© JEJU AIR Cabin Training Team 임 청</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== LOGIN SCREEN ===================== -->
+  <div id="screen-login" class="screen">
+    <header class="app-header">
+      <div class="header-left">
+        <button class="btn-icon" onclick="goHome()">
+          <i class="ph ph-caret-left"></i>
+        </button>
+      </div>
+      <div class="header-center">Role-Playing Login</div>
+      <div class="header-right">
+        <button class="btn-icon" onclick="goHome()">
+          <i class="ph ph-house"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="login-wrapper">
+      <div class="login-card">
+        <div class="logo-wrap">
+          <img src="LOGO.png" alt="제주항공 로고" class="logo-img">
+          <p class="logo-sub">Cabin Training System</p>
+        </div>
+
+        <div class="form-container">
+          <div class="form-group">
+            <label>나의 이름 (평가자)</label>
+            <input type="text" id="input-evaluator-name" placeholder="이름을 입력하세요" />
+          </div>
+
+          <div class="form-group">
+            <label>평가 대상 (객실승무원)</label>
+            <input type="text" id="input-trainee-name" placeholder="승무원 이름 입력" />
+          </div>
+
+          <div class="form-group">
+            <label>훈련 날짜</label>
+            <input type="date" id="input-date" />
+          </div>
+
+          <button class="btn-primary main-start-btn" onclick="startSession()">
+            훈련 시작하기
+          </button>
+        </div>
+
+        <div class="login-footer">
+          <button class="btn-text-only" onclick="promptAdminLogin()">
+            관리자 메뉴
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MAIN ROLEPLAY & EVALUATION SCREEN ===================== -->
+  <div id="screen-main" class="screen">
+    <header class="app-header">
+      <div class="header-left">
+        <span class="header-badge">롤플레잉</span>
+      </div>
+      <div class="header-center" id="header-names">
+        <!-- Rendered via JS -->
+      </div>
+      <div class="header-right">
+        <button class="btn-icon" onclick="goHome()">
+          <i class="ph ph-house"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Phase navigation -->
+    <div class="phase-nav" id="phase-nav"></div>
+
+    <!-- Scrollable Content Area -->
+    <div class="scroll-content">
+      <div class="phase-card" id="phase-card">
+        <div class="phase-header">
+          <span class="phase-number" id="phase-number"></span>
+          <h2 class="phase-title" id="phase-title"></h2>
+        </div>
+
+        <!-- Unified Roleplay & Rating Section -->
+        <div id="section-unified">
+          <div class="instruction-box" id="instruction-box">
+            <p class="instruction-label blink-text"><i class="ph-fill ph-warning-circle"></i> 나의 행동 지시</p>
+            <p class="instruction-text" id="instruction-text"></p>
+          </div>
+          <div class="question-box" id="question-box" style="display:none;">
+            <p class="question-label"><i class="ph-fill ph-chat-circle-text"></i> 승무원에게 이 질문을 하세요</p>
+            <p class="question-text" id="question-text"></p>
+          </div>
+          
+          <div class="rating-section" style="margin-top: 12px;">
+            <p class="rating-label">승무원 대처 평가 (점수 클릭 시 자동 저장 및 다음)</p>
+            <div class="emoji-rating" id="emoji-rating">
+              <button class="emoji-btn level-1" data-score="1" onclick="setRatingAndSave(1)" title="매우 불만족"><i class="ph-duotone ph-smiley-angry"></i></button>
+              <button class="emoji-btn level-2" data-score="2" onclick="setRatingAndSave(2)" title="불만족"><i class="ph-duotone ph-smiley-sad"></i></button>
+              <button class="emoji-btn level-3" data-score="3" onclick="setRatingAndSave(3)" title="보통"><i class="ph-duotone ph-smiley-meh"></i></button>
+              <button class="emoji-btn level-4" data-score="4" onclick="setRatingAndSave(4)" title="만족"><i class="ph-duotone ph-smiley"></i></button>
+              <button class="emoji-btn level-5" data-score="5" onclick="setRatingAndSave(5)" title="매우 만족"><i class="ph-duotone ph-star"></i></button>
+            </div>
+            <div class="rating-labels-row">
+              <span>매우 불만족</span><span>불만족</span><span>보통</span><span>만족</span><span>매우 만족</span>
+            </div>
+            <div class="save-toast" id="save-toast"><i class="ph-bold ph-check"></i> 저장 후 다음으로 이동합니다...</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Phase Navigation buttons moved inside scroll area -->
+      <div class="phase-nav-buttons">
+        <button class="btn-secondary" id="btn-prev" onclick="changePhase(-1)"><i class="ph-bold ph-caret-left"></i> 이전</button>
+        <span class="phase-indicator" id="phase-indicator"></span>
+        <button class="btn-secondary" id="btn-next" onclick="changePhase(1)">다음 <i class="ph-bold ph-caret-right"></i></button>
+      </div>
+    </div>
+
+    <!-- Fixed Bottom Navigation (Swapped with End Training) -->
+    <div class="bottom-nav">
+      <button class="btn-end-training" onclick="confirmEndTraining()">
+        <div class="btn-end-inner">
+          <i class="ph-fill ph-check-circle"></i>
+          <span>모든 훈련 종료 및 결과 보기</span>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- ===================== SUMMARY SCREEN ===================== -->
+  <div id="screen-summary" class="screen">
+    <header class="app-header">
+      <div class="header-left">
+        <button class="btn-icon" onclick="backToMain()">
+          <i class="ph-bold ph-caret-left"></i>
+        </button>
+      </div>
+      <div class="header-center">전체 결과 요약</div>
+      <div class="header-right">
+        <button class="btn-icon" onclick="goHome()">
+          <i class="ph-bold ph-house"></i>
+        </button>
+      </div>
+    </header>
+    
+    <div class="scroll-content">
+      <div class="summary-content" id="summary-content"></div>
+      
+      <div style="padding:0 16px 24px;">
+        <p style="font-size:13px; color:rgba(255,255,255,0.8); margin-bottom:16px; text-align:center; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">모든 평가 데이터는 클라우드에 안전하게 저장되었습니다.<br>전체 데이터는 관리자 메뉴에서 다운로드할 수 있습니다.</p>
+        <button class="btn-home-finish" onclick="goHome()">
+          <i class="ph-bold ph-house-line"></i>
+          <span>메인 화면으로 돌아가기</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== ADMIN SCREEN ===================== -->
+  <div id="screen-admin" class="screen">
+    <header class="app-header">
+      <div class="header-left">
+        <button class="btn-icon" onclick="goHome()">
+          <i class="ph-bold ph-caret-left"></i>
+        </button>
+      </div>
+      <div class="header-center"><i class="ph-fill ph-lock-key"></i> 관리자 대시보드</div>
+      <div class="header-right">
+        <button class="btn-icon" onclick="goHome()">
+          <i class="ph-bold ph-house"></i>
+        </button>
+      </div>
+    </header>
+    
+    <div class="scroll-content">
+      <div class="admin-content">
+        <p style="font-size: 16px; font-weight: 700; margin-bottom: 20px; color: var(--text-primary);">일자별 데이터 다운로드</p>
+        <div id="admin-date-list" style="display:flex; flex-direction:column; gap:12px;"></div>
+        
+        <div style="margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--border);">
+          <button class="btn-outline" style="border-color:var(--success); color:var(--success);" onclick="downloadAllExcel()">
+            <i class="ph-bold ph-download-simple"></i> 전체 데이터 통합 다운로드
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODULE PLACEHOLDERS ===================== -->
+  <div id="screen-pram" class="screen">
+    <header class="app-header">
+      <div class="header-left">
+        <button class="btn-icon" onclick="goHome()">
+          <i class="ph ph-caret-left"></i>
+        </button>
+      </div>
+      <div class="header-center">737-800/8 PRAM</div>
+      <div class="header-right">
+        <button class="btn-icon" onclick="goHome()">
+          <i class="ph ph-house"></i>
+        </button>
+      </div>
+    </header>
+    <div class="iframe-container">
+      <iframe id="iframe-pram" src="" frameborder="0"></iframe>
+    </div>
+  </div>
+
+  <div id="screen-interphone" class="screen">
+    <header class="app-header">
+      <div class="header-left">
+        <button class="btn-icon" onclick="goHome()">
+          <i class="ph ph-caret-left"></i>
+        </button>
+      </div>
+      <div class="header-center">737-800/8 Interphone</div>
+      <div class="header-right">
+        <button class="btn-icon" onclick="goHome()">
+          <i class="ph ph-house"></i>
+        </button>
+      </div>
+    </header>
+    <div class="iframe-container">
+      <iframe id="iframe-interphone" src="" frameborder="0"></iframe>
+    </div>
+  </div>
+
+  <div id="screen-cml" class="screen">
+    <header class="app-header">
+      <div class="header-left">
+        <button class="btn-icon" onclick="goHome()">
+          <i class="ph ph-caret-left"></i>
+        </button>
+      </div>
+      <div class="header-center">737-800/8 CML 자가학습</div>
+      <div class="header-right">
+        <button class="btn-icon" onclick="goHome()">
+          <i class="ph ph-house"></i>
+        </button>
+      </div>
+    </header>
+    <div class="iframe-container">
+      <iframe id="iframe-cml" src="" frameborder="0"></iframe>
+    </div>
+  </div>
+
+  <!-- ===================== CHAT LOBBY SCREEN ===================== -->
+  <div id="screen-chat-lobby" class="screen">
+    <header class="app-header">
+      <div class="header-left">
+        <button class="btn-icon" onclick="goHome()">
+          <i class="ph ph-caret-left"></i>
+        </button>
+      </div>
+      <div class="header-center">Open Chat Lobby</div>
+      <div class="header-right">
+        <button class="btn-icon" onclick="promptChatAdminLogin()">
+          <i class="ph-fill ph-crown"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="scroll-content" style="padding: 20px;">
+      <div class="chat-profile-section card">
+        <h3 style="margin-bottom: 15px; font-size: 16px;">프로필 설정</h3>
+        
+        <div class="form-group">
+          <label>이름 (닉네임)</label>
+          <input type="text" id="chat-user-name" placeholder="이름을 입력하세요" />
+        </div>
+
+        <div class="form-group" id="chat-group-selection">
+          <label>소속 조 선택</label>
+          <div class="group-selectors">
+            <button class="group-btn" data-group="1" style="--g-color: #FF3B30;">1조</button>
+            <button class="group-btn" data-group="2" style="--g-color: #FF9500;">2조</button>
+            <button class="group-btn" data-group="3" style="--g-color: #FFCC00;">3조</button>
+            <button class="group-btn" data-group="4" style="--g-color: #34C759;">4조</button>
+            <button class="group-btn" data-group="5" style="--g-color: #007AFF;">5조</button>
+            <button class="group-btn" data-group="6" style="--g-color: #AF52DE;">6조</button>
+          </div>
+        </div>
+
+        <div id="admin-profile-badge" style="display: none; padding: 10px; background: rgba(255,204,0,0.15); border: 1px solid #FFCC00; border-radius: 8px; color: #FFCC00; margin-bottom: 15px; text-align: center; font-weight: bold;">
+          <i class="ph-fill ph-crown"></i> 관리자 모드로 접속 중
+        </div>
+      </div>
+
+      <div class="chat-rooms-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <h3 style="font-size: 16px; color: white;">참여 가능한 방</h3>
+            <button class="btn-icon" onclick="loadChatRooms()" title="새로고침" style="font-size: 18px; color: var(--jeju-orange);">
+              <i id="icon-refresh" class="ph-bold ph-arrows-clockwise"></i>
+            </button>
+          </div>
+          <button id="btn-create-room" class="btn-outline" style="display: none; width: auto; padding: 6px 12px; font-size: 12px; border-color: var(--jeju-orange); color: var(--jeju-orange);" onclick="createNewChatRoom()">
+            <i class="ph-bold ph-plus"></i> 방 만들기
+          </button>
+        </div>
+        
+        <div id="chat-room-list" class="room-list">
+          <!-- Rooms will be loaded here -->
+          <div style="text-align: center; color: var(--text-secondary); padding: 20px;">방 목록을 불러오는 중...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== CHAT ROOM SCREEN ===================== -->
+  <div id="screen-chat" class="screen">
+    <header class="app-header">
+      <div class="header-left">
+        <button class="btn-icon" onclick="leaveChatRoom()">
+          <i class="ph ph-caret-left"></i>
+        </button>
+      </div>
+      <div class="header-center" id="chat-room-title"><i class="ph-fill ph-chats-circle"></i> Chat Room</div>
+      <div class="header-right" style="display: flex; gap: 8px;">
+        <button class="btn-icon" onclick="toggleParticipantList()" style="position: relative;">
+          <i class="ph-bold ph-users-three"></i>
+          <span id="participant-count-badge" class="participant-badge">0</span>
+        </button>
+        <button class="btn-icon" onclick="goHome()">
+          <i class="ph ph-house"></i>
+        </button>
+      </div>
+    </header>
+    
+    <div class="chat-container">
+      <div class="chat-messages" id="chat-messages">
+        <!-- Messages will be rendered here -->
+      </div>
+      <div class="chat-input-area">
+        <input type="text" id="chat-input" placeholder="메시지를 입력하세요..." onkeypress="if(event.key === 'Enter') sendChatMessage()">
+        <button class="btn-send" onclick="sendChatMessage()">
+          <i class="ph-fill ph-paper-plane-right"></i>
+        </button>
+      </div>
+
+      <!-- Participant List Modal (Inside Screen) -->
+      <div class="participants-card">
+        <div class="participants-header">
+          <h3>참여자 명단 (<span id="modal-participant-count">0</span>명)</h3>
+          <button class="btn-icon" onclick="toggleParticipantList()"><i class="ph ph-x"></i></button>
+        </div>
+        <div id="participants-list" class="participants-list">
+          <!-- Participant items will be rendered here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js?v=6.0"></script>
+  <script src="app.js?v=6.0"></script>
+  </body>
+  </html>
