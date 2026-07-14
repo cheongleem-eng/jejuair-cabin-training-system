@@ -865,6 +865,34 @@
   }
   
   /* ---- CML Guide PDF Modal ---- */
+  .guide-book-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    transition: width 0.2s ease;
+  }
+  .guide-page-container {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    flex: 1;
+    max-width: 50%;
+  }
+  @media (max-width: 768px) {
+    .guide-book-container {
+      flex-direction: column;
+      align-items: center;
+    }
+    .guide-page-container {
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+  }
+
   .guide-modal-overlay {
     position: fixed;
     top: 0;
@@ -2044,25 +2072,15 @@ document.getElementById('quizAnswerBtn').addEventListener('click', ()=>{
     const overlay = document.getElementById('guideModalOverlay');
     const closeBtn = document.getElementById('guideModalCloseBtn');
     const linkBtn = document.getElementById('guideLink');
-    const img = document.getElementById('guideImage');
     const pageNumText = document.getElementById('pageNumText');
     
-    const pages = ['guide1.jpg', 'guide2.jpg'];
-    let pageNum = 1;
     let currentPdfScale = 1.0;
 
-    function renderPage(num) {
-      if (img) {
-        img.src = pages[num - 1];
-        updateZoom();
-      }
-      pageNumText.textContent = num + ' / ' + pages.length;
-    }
-
     function updateZoom() {
-      if (img) {
-        img.style.width = (currentPdfScale * 100) + '%';
-        img.style.maxWidth = 'none';
+      const container = document.getElementById('guideBookContainer');
+      if (container) {
+        container.style.width = (currentPdfScale * 100) + '%';
+        container.style.maxWidth = 'none';
       }
     }
 
@@ -2074,9 +2092,8 @@ document.getElementById('quizAnswerBtn').addEventListener('click', ()=>{
       linkBtn.addEventListener('click', function(e) {
         e.preventDefault();
         overlay.classList.add('open');
-        pageNum = 1;
         currentPdfScale = 1.0;
-        renderPage(pageNum);
+        updateZoom();
       });
     }
 
@@ -2090,18 +2107,6 @@ document.getElementById('quizAnswerBtn').addEventListener('click', ()=>{
       if (e.target === overlay) {
         overlay.classList.remove('open');
       }
-    });
-
-    document.getElementById('guidePrevBtn').addEventListener('click', () => {
-      if (pageNum <= 1) return;
-      pageNum--;
-      renderPage(pageNum);
-    });
-
-    document.getElementById('guideNextBtn').addEventListener('click', () => {
-      if (pageNum >= pages.length) return;
-      pageNum++;
-      renderPage(pageNum);
     });
 
     document.getElementById('guideZoomInBtn').addEventListener('click', () => {
@@ -2122,14 +2127,19 @@ document.getElementById('quizAnswerBtn').addEventListener('click', ()=>{
 
   <!-- CML Guide PDF Modal Overlay -->
   <div class="guide-modal-overlay" id="guideModalOverlay">
-    <div class="guide-modal-box">
+    <div class="guide-modal-box" style="max-width: 1400px; width: 95%; height: 90vh; max-height: 90vh;">
       <div class="guide-modal-header">
         <h3>CML 작성 가이드</h3>
         <button class="guide-modal-close" id="guideModalCloseBtn">&times;</button>
       </div>
-      <div class="guide-modal-body" style="overflow: auto;">
-        <div class="canvas-wrapper" style="max-width: 100%; display: flex; justify-content: center; align-items: flex-start; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
-          <img id="guideImage" src="guide1.jpg" style="width: 100%; height: auto; display: block;" alt="Guide Page">
+      <div class="guide-modal-body" style="overflow: auto; padding: 20px; background: #f8fafc;">
+        <div class="guide-book-container" id="guideBookContainer">
+          <div class="guide-page-container">
+            <img src="guide1.jpg" style="width: 100%; height: auto; display: block;" alt="Guide Page 1">
+          </div>
+          <div class="guide-page-container">
+            <img src="guide2.jpg" style="width: 100%; height: auto; display: block;" alt="Guide Page 2">
+          </div>
         </div>
       </div>
       <div class="guide-modal-footer">
@@ -2137,7 +2147,7 @@ document.getElementById('quizAnswerBtn').addEventListener('click', ()=>{
           <button id="guideZoomOutBtn" title="축소">🔍 -</button>
           <button id="guideZoomInBtn" title="확대">🔍 +</button>
         </div>
-        <div class="guide-page-controls">
+        <div class="guide-page-controls" style="display: none;">
           <button class="btn btn-ghost" id="guidePrevBtn" style="min-width: 80px; padding: 6px 12px; font-size: 12px;">이전</button>
           <span id="pageNumText">1 / 2</span>
           <button class="btn btn-ghost" id="guideNextBtn" style="min-width: 80px; padding: 6px 12px; font-size: 12px;">다음</button>
