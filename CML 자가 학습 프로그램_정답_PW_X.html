@@ -172,16 +172,16 @@
   }
   .box-col{display:flex;flex-direction:column;}
   .logpageno .box-col {
-    width: 150px;
+    width: 170px;
   }
   .logpageno input.field {
-    width: 80px;
+    width: 95px;
   }
   .date-box .box-col {
-    width: 230px;
+    width: 250px;
   }
   .date-box input.field {
-    width: 150px;
+    width: 170px;
   }
   .box-body{
     display:flex;
@@ -248,8 +248,8 @@
     padding:6px 10px;
     background:#fff;
   }
-  .hl-input{width:90px;}
-  .date-input{width:150px;letter-spacing:1px;}
+  .hl-input{width:110px;}
+  .date-input{width:170px;letter-spacing:1px;}
   .num-grid{
     display:grid;
     grid-template-columns:repeat(3,32px);
@@ -321,7 +321,14 @@
     text-align:center;
     background:#f8fafc;
   }
-  td.itemno-cell input, td.itemno2-cell input{width:34px;padding:6px 2px;}
+  td.itemno-cell input, td.itemno2-cell input{
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    text-align: center !important;
+    border-radius: 4px !important;
+    box-sizing: border-box !important;
+  }
   .flt-wrap{display:flex;align-items:center;justify-content:center;gap:4px;font-weight:700;flex-wrap:wrap;}
   .flt-wrap input{width:52px;}
   td.reportedby-cell input, td.checkedby-cell input{width:150px;}
@@ -336,26 +343,19 @@
     font-size:13px;
     font-weight:600;
     letter-spacing:.5px;
-    line-height:26px;
-    height:106px; /* 26px x 4줄 + 위 여백 */
-    padding:2px 10px 0;
+    line-height: 22px;
+    height: 104px;
+    padding: 8px 12px;
     border:1.5px solid #cbd5e1;
     border-radius:6px;
     outline:none;
     resize:none;
-    overflow:hidden;
+    overflow-y:auto;
     background-color:#fafafb;
-    background-image:repeating-linear-gradient(
-      to bottom,
-      transparent,
-      transparent 25px,
-      #cbd5e1 25px,
-      #cbd5e1 26px
-    );
-    background-attachment:local;
+    background-image: linear-gradient(transparent 21px, #cbd5e1 21px);
+    background-size: 100% 22px;
+    background-attachment: local;
     white-space:pre-wrap;
-    word-break:normal;
-    overflow-wrap:normal;
     transition:all 0.15s ease-in-out;
   }
   textarea.mal-area:focus{
@@ -365,12 +365,14 @@
   }
   textarea.mal-area.correct{
     background-color:var(--ok-bg) !important;
+    background-image: linear-gradient(transparent 21px, #a7f3d0 21px) !important;
     border-color:var(--ok) !important;
     color:#065f46 !important;
     box-shadow:0 0 0 3px rgba(16, 185, 129, 0.1) !important;
   }
   textarea.mal-area.incorrect{
     background-color:var(--bad-bg) !important;
+    background-image: linear-gradient(transparent 21px, #fca5a5 21px) !important;
     border-color:var(--bad) !important;
     color:#991b1b !important;
     box-shadow:0 0 0 3px rgba(239, 68, 68, 0.1) !important;
@@ -447,10 +449,10 @@
       flex-shrink: 0 !important;
     }
     body .doc-head .logpageno .box-col {
-      width: 110px !important;
+      width: 135px !important;
     }
     body .doc-head .logpageno input.field {
-      width: 54px !important;
+      width: 70px !important;
       font-size: 11px !important;
       padding: 4px 6px !important;
     }
@@ -466,15 +468,15 @@
       font-size: 12px !important;
     }
     body .doc-head .hl-box .hl-input {
-      width: 50px !important;
+      width: 70px !important;
       font-size: 11px !important;
       padding: 4px 6px !important;
     }
     body .doc-head .date-box .box-col {
-      width: 150px !important;
+      width: 180px !important;
     }
     body .doc-head .date-box input.field {
-      width: 100px !important;
+      width: 125px !important;
       font-size: 11px !important;
       padding: 4px 6px !important;
     }
@@ -1016,7 +1018,7 @@
 <div class="wrap">
 
   <div class="toolbar">
-    <h2>CABIN MAINTENANCE LOG 작성 연습</h2>
+    <h2>CABIN MAINTENANCE LOG</h2>
     <div class="score">점수: <span class="num" id="scoreNum">0 / 0</span></div>
     <div style="display:flex; gap:8px; align-items:center;">
       <a id="guideLink" href="#" target="_blank" rel="noopener" class="btn btn-ghost" style="text-decoration:none; display:inline-flex; align-items:center;">CML 작성 가이드</a>
@@ -1088,10 +1090,6 @@
         <div data-num="4"><span class="numtext">4</span><span class="xmark">X</span></div>
         <div data-num="5"><span class="numtext">5</span><span class="xmark">X</span></div>
         <div data-num="6"><span class="numtext">6</span><span class="xmark">X</span></div>
-      </div>
-
-      <div class="brand-logo">
-        <img src="data:image/png;base64,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" alt="logo">
       </div>
     </div>
 
@@ -1178,7 +1176,7 @@ blocks.forEach((blockProblems, bIdx)=>{
       tdMal.rowSpan = 4;
       tdMal.innerHTML = `
         <div class="line-row">
-          <textarea class="mal-area validate" data-type="malfunction" data-block="${bIdx}" rows="4" wrap="soft" spellcheck="false"></textarea>
+          <textarea class="mal-area validate" data-type="malfunction" data-block="${bIdx}" rows="4" wrap="soft" spellcheck="false" maxlength="80"></textarea>
           <span class="mark"></span>
         </div>`;
       tr.appendChild(tdMal);
@@ -1222,14 +1220,7 @@ blocks.forEach((blockProblems, bIdx)=>{
   });
 });
 
-// MALFUNCTION 칸: 4줄(괘선)을 넘어가는 입력은 잘라냄
-document.querySelectorAll('textarea[data-type="malfunction"]').forEach(ta=>{
-  ta.addEventListener('input', ()=>{
-    while(ta.scrollHeight > ta.clientHeight && ta.value.length > 0){
-      ta.value = ta.value.slice(0, -1);
-    }
-  });
-});
+
 
 // ---- validation ----
 const patterns = {
