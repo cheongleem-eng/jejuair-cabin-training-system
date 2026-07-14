@@ -2039,91 +2039,31 @@ document.getElementById('quizAnswerBtn').addEventListener('click', ()=>{
     const blob = new Blob([byteArray], {type: mime});
     return URL.createObjectURL(blob);
   }
-  const guideBlobUrl = base64ToBlobUrl(CML_GUIDE_PDF_BASE64, 'application/pdf');
   // Open modal instead of setting href
   (function() {
     const overlay = document.getElementById('guideModalOverlay');
     const closeBtn = document.getElementById('guideModalCloseBtn');
     const linkBtn = document.getElementById('guideLink');
-    const canvas = document.getElementById('guideCanvas');
-    const ctx = canvas.getContext('2d');
+    const img = document.getElementById('guideImage');
     const pageNumText = document.getElementById('pageNumText');
     
-    let pdfDoc = null;
+    const pages = ['guide1.jpg', 'guide2.jpg'];
     let pageNum = 1;
-    let pageRendering = false;
-    let pageNumPending = null;
     let currentPdfScale = 1.0;
 
-    if (window.pdfjsLib) {
-      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-    }
-
-    function getPdfData() {
-      const raw = window.atob(CML_GUIDE_PDF_BASE64);
-      const rawLength = raw.length;
-      const array = new Uint8Array(new ArrayBuffer(rawLength));
-      for(let i = 0; i < rawLength; i++) {
-        array[i] = raw.charCodeAt(i);
-      }
-      return array;
-    }
-
     function renderPage(num) {
-      if (!pdfDoc) return;
-      pageRendering = true;
-      
-      pdfDoc.getPage(num).then(page => {
-        const bodyEl = document.querySelector('.guide-modal-body');
-        const containerWidth = (bodyEl ? bodyEl.clientWidth : 760) - 40;
-        const unscaledViewport = page.getViewport({ scale: 1.0 });
-        
-        let pageScale = (containerWidth / unscaledViewport.width) * currentPdfScale;
-        
-        const viewport = page.getViewport({ scale: pageScale });
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-
-        const renderContext = {
-          canvasContext: ctx,
-          viewport: viewport
-        };
-        const renderTask = page.render(renderContext);
-
-        renderTask.promise.then(() => {
-          pageRendering = false;
-          if (pageNumPending !== null) {
-            renderPage(pageNumPending);
-            pageNumPending = null;
-          }
-        });
-      }).catch(err => {
-        console.error('Error rendering PDF page:', err);
-        pageRendering = false;
-      });
-
-      pageNumText.textContent = num + ' / ' + pdfDoc.numPages;
-    }
-
-    function queueRenderPage(num) {
-      if (pageRendering) {
-        pageNumPending = num;
-      } else {
-        renderPage(num);
+      if (img) {
+        img.src = pages[num - 1];
+        updateZoom();
       }
+      pageNumText.textContent = num + ' / ' + pages.length;
     }
 
-    function loadPdf() {
-      if (pdfDoc) return Promise.resolve(pdfDoc);
-      
-      const data = getPdfData();
-      return pdfjsLib.getDocument({ data: data }).promise.then(pdf => {
-        pdfDoc = pdf;
-        pageNum = 1;
-        return pdf;
-      }).catch(err => {
-        console.error('Error loading PDF document:', err);
-      });
+    function updateZoom() {
+      if (img) {
+        img.style.width = (currentPdfScale * 100) + '%';
+        img.style.maxWidth = 'none';
+      }
     }
 
     if (linkBtn) {
@@ -2134,9 +2074,9 @@ document.getElementById('quizAnswerBtn').addEventListener('click', ()=>{
       linkBtn.addEventListener('click', function(e) {
         e.preventDefault();
         overlay.classList.add('open');
-        loadPdf().then(() => {
-          renderPage(pageNum);
-        });
+        pageNum = 1;
+        currentPdfScale = 1.0;
+        renderPage(pageNum);
       });
     }
 
@@ -2153,35 +2093,25 @@ document.getElementById('quizAnswerBtn').addEventListener('click', ()=>{
     });
 
     document.getElementById('guidePrevBtn').addEventListener('click', () => {
-      if (!pdfDoc || pageNum <= 1) return;
+      if (pageNum <= 1) return;
       pageNum--;
-      queueRenderPage(pageNum);
+      renderPage(pageNum);
     });
 
     document.getElementById('guideNextBtn').addEventListener('click', () => {
-      if (!pdfDoc || pageNum >= pdfDoc.numPages) return;
+      if (pageNum >= pages.length) return;
       pageNum++;
-      queueRenderPage(pageNum);
+      renderPage(pageNum);
     });
 
     document.getElementById('guideZoomInBtn').addEventListener('click', () => {
       currentPdfScale += 0.15;
-      queueRenderPage(pageNum);
+      updateZoom();
     });
 
     document.getElementById('guideZoomOutBtn').addEventListener('click', () => {
       currentPdfScale = Math.max(0.5, currentPdfScale - 0.15);
-      queueRenderPage(pageNum);
-    });
-
-    let renderTimeout;
-    window.addEventListener('resize', () => {
-      if (overlay.classList.contains('open') && pdfDoc) {
-        clearTimeout(renderTimeout);
-        renderTimeout = setTimeout(() => {
-          renderPage(pageNum);
-        }, 150);
-      }
+      updateZoom();
     });
   })();
 </script>
@@ -2197,9 +2127,9 @@ document.getElementById('quizAnswerBtn').addEventListener('click', ()=>{
         <h3>CML 작성 가이드</h3>
         <button class="guide-modal-close" id="guideModalCloseBtn">&times;</button>
       </div>
-      <div class="guide-modal-body">
-        <div class="canvas-wrapper">
-          <canvas id="guideCanvas"></canvas>
+      <div class="guide-modal-body" style="overflow: auto;">
+        <div class="canvas-wrapper" style="max-width: 100%; display: flex; justify-content: center; align-items: flex-start; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
+          <img id="guideImage" src="guide1.jpg" style="width: 100%; height: auto; display: block;" alt="Guide Page">
         </div>
       </div>
       <div class="guide-modal-footer">
