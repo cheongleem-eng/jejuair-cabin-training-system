@@ -1153,72 +1153,58 @@ for(let i=0;i<5;i++){
 
 const tbody = document.getElementById('blocksBody');
 blocks.forEach((blockProblems, bIdx)=>{
-  blockProblems.forEach((p, lineIdx)=>{
-    const tr = document.createElement('tr');
+  const tr = document.createElement('tr');
 
-    if(lineIdx === 0){
-      // ITEM No (left) - 위에서부터 1,2,3,4,5 순서로 작성해야 정답
-      const tdItem = document.createElement('td');
-      tdItem.className = 'itemno-cell';
-      tdItem.rowSpan = 4;
-      tdItem.innerHTML = `<input type="text" class="field validate" data-type="itemno" data-block="${bIdx}" maxlength="1">`;
-      tr.appendChild(tdItem);
+  // ITEM No (left) - 위에서부터 1,2,3,4,5 순서로 작성해야 정답
+  const tdItem = document.createElement('td');
+  tdItem.className = 'itemno-cell';
+  tdItem.innerHTML = `<input type="text" class="field validate" data-type="itemno" data-block="${bIdx}" maxlength="1">`;
+  tr.appendChild(tdItem);
 
-      // FLT No
-      const tdFlt = document.createElement('td');
-      tdFlt.className = 'flt-cell';
-      tdFlt.rowSpan = 4;
-      tdFlt.innerHTML = `<div class="flt-wrap">7C<input type="text" class="field validate" data-type="flt" data-block="${bIdx}" maxlength="4"></div>`;
-      tr.appendChild(tdFlt);
+  // FLT No
+  const tdFlt = document.createElement('td');
+  tdFlt.className = 'flt-cell';
+  tdFlt.innerHTML = `<div class="flt-wrap">7C<input type="text" class="field validate" data-type="flt" data-block="${bIdx}" maxlength="4"></div>`;
+  tr.appendChild(tdFlt);
 
-      // MALFUNCTION - 블록당 한 칸(내부 4줄 괘선), 단어 단위 자동 줄바꿈
-      const tdMal = document.createElement('td');
-      tdMal.className = 'line-cell';
-      tdMal.rowSpan = 4;
-      tdMal.innerHTML = `
-        <div class="line-row">
-          <textarea class="mal-area validate" data-type="malfunction" data-block="${bIdx}" rows="4" wrap="soft" spellcheck="false" maxlength="80"></textarea>
-          <span class="mark"></span>
-        </div>`;
-      tr.appendChild(tdMal);
-    }
+  // MALFUNCTION - 블록당 한 칸(내부 4줄 괘선), 단어 단위 자동 줄바꿈
+  const tdMal = document.createElement('td');
+  tdMal.className = 'line-cell';
+  tdMal.innerHTML = `
+    <div class="line-row">
+      <textarea class="mal-area validate" data-type="malfunction" data-block="${bIdx}" rows="4" wrap="soft" spellcheck="false" maxlength="80"></textarea>
+      <span class="mark"></span>
+    </div>`;
+  tr.appendChild(tdMal);
 
-    if(lineIdx === 0){
-      // REPORTED BY
-      const tdRep = document.createElement('td');
-      tdRep.className = 'reportedby-cell';
-      tdRep.rowSpan = 4;
-      tdRep.innerHTML = `<input type="text" class="field validate" data-type="reportedby">`;
-      tr.appendChild(tdRep);
+  // REPORTED BY
+  const tdRep = document.createElement('td');
+  tdRep.className = 'reportedby-cell';
+  tdRep.innerHTML = `<input type="text" class="field validate" data-type="reportedby">`;
+  tr.appendChild(tdRep);
 
-      // ITEM No (right) - 비활성화
-      const tdItem2 = document.createElement('td');
-      tdItem2.className = 'itemno2-cell';
-      tdItem2.rowSpan = 4;
-      tdItem2.innerHTML = `<input type="text" class="field" maxlength="1" disabled>`;
-      tr.appendChild(tdItem2);
-    }
+  // ITEM No (right) - 비활성화
+  const tdItem2 = document.createElement('td');
+  tdItem2.className = 'itemno2-cell';
+  tdItem2.innerHTML = `<input type="text" class="field" maxlength="1" disabled>`;
+  tr.appendChild(tdItem2);
 
-    // CORRECTIVE ACTION (disabled)
-    const tdCor = document.createElement('td');
-    tdCor.className = 'line-cell';
-    tdCor.innerHTML = `
-      <div class="line-row">
-        <input type="text" class="field" disabled>
-      </div>`;
-    tr.appendChild(tdCor);
+  // CORRECTIVE ACTION (disabled) - MALFUNCTION과 매칭되는 대칭형 비활성 textarea
+  const tdCor = document.createElement('td');
+  tdCor.className = 'line-cell';
+  tdCor.innerHTML = `
+    <div class="line-row">
+      <textarea class="mal-area" disabled rows="4" wrap="soft" spellcheck="false" placeholder="FOR MAINTENANCE USE ONLY"></textarea>
+    </div>`;
+  tr.appendChild(tdCor);
 
-    if(lineIdx === 0){
-      // CHECKED BY PURSER
-      const tdChk = document.createElement('td');
-      tdChk.className = 'checkedby-cell';
-      tdChk.rowSpan = 4;
-      tdChk.innerHTML = `<input type="text" class="field validate" data-type="checkedby" data-block="${bIdx}">`;
-      tr.appendChild(tdChk);
-    }
+  // CHECKED BY PURSER
+  const tdChk = document.createElement('td');
+  tdChk.className = 'checkedby-cell';
+  tdChk.innerHTML = `<input type="text" class="field validate" data-type="checkedby" data-block="${bIdx}">`;
+  tr.appendChild(tdChk);
 
-    tbody.appendChild(tr);
-  });
+  tbody.appendChild(tr);
 });
 
 
