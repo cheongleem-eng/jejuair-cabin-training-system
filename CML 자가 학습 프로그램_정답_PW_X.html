@@ -1033,10 +1033,9 @@
   </div>
 
   <div class="note">
-    <b>작성 규칙</b> — ① 알파벳은 반드시 <b>대문자</b>로 입력하세요. ② DATE / CHECKED BY PURSER 의 날짜는 <b>DD-MMM-YY</b>
+    <b>작성 규칙</b> — ① 알파벳은 반드시 <b>대문자</b>로 입력하세요. ② DATE 의 날짜는 <b>DD-MMM-YY</b>
     형식입니다 (예: 23-FEB-22). ③ REPORTED BY 는 <b>이름 (사번)</b> 형식입니다 (예: CHO JEMIN (1010006)).
-    ④ CHECKED BY PURSER 는 <b>이름 (사번) 날짜(DD-MMM-YY)</b> 형식입니다 (예: CHO JEMIN (1010006) 23-FEB-22).
-    ⑤ MALFUNCTION 칸은 제시된 문제 상황을 <b>위치 + 장비/설비 + 결함 내용</b> 순서의 정확한 문장으로 작성해야 정답 처리됩니다.
+    ④ MALFUNCTION 칸은 제시된 문제 상황을 <b>위치 + 장비/설비 + 결함 내용</b> 순서의 정확한 문장으로 작성해야 정답 처리됩니다.
   </div>
 
   <div class="quiz-panel" id="quizPanel">
@@ -1201,10 +1200,10 @@ blocks.forEach((blockProblems, bIdx)=>{
     </div>`;
   tr.appendChild(tdCor);
 
-  // CHECKED BY PURSER
+  // CHECKED BY PURSER - 비활성화
   const tdChk = document.createElement('td');
   tdChk.className = 'checkedby-cell';
-  tdChk.innerHTML = `<input type="text" class="field validate" data-type="checkedby" data-block="${bIdx}">`;
+  tdChk.innerHTML = `<input type="text" class="field" disabled>`;
   tr.appendChild(tdChk);
 
   tbody.appendChild(tr);
