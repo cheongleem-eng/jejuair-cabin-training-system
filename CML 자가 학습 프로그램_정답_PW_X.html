@@ -18,6 +18,7 @@
     --page-bg:#f1f5f9;
     --accent:#FF5000;
     --disabled-bg:#e2e8f0;
+    --pen-color:#1e293b;
   }
   *{box-sizing:border-box;}
   body{
@@ -198,6 +199,7 @@
     font-family:inherit;
     font-size:14px;
     font-weight:600;
+    color: var(--pen-color, #1e293b);
     border:1.5px solid #cbd5e1;
     border-radius:6px;
     padding:6px 8px;
@@ -342,6 +344,7 @@
     font-family:inherit;
     font-size:13px;
     font-weight:600;
+    color: var(--pen-color, #1e293b);
     letter-spacing:.5px;
     line-height: 22px;
     height: 104px;
@@ -2240,6 +2243,17 @@ document.getElementById('quizAnswerBtn').addEventListener('click', ()=>{
       </div>
     </div>
 
+    <div class="cml-settings-row">
+      <div class="cml-settings-label">
+        <span>펜 색상 (Pen Color)</span>
+        <span class="cml-settings-value" id="cmlPenVal">검정 (Black)</span>
+      </div>
+      <div class="cml-settings-ctrls">
+        <button id="penBlackBtn">검정</button>
+        <button id="penBlueBtn">파랑</button>
+      </div>
+    </div>
+
     <button class="cml-settings-reset-btn" id="settingsResetBtn">초기화 (Reset)</button>
   </div>
 
@@ -2341,6 +2355,47 @@ document.getElementById('quizAnswerBtn').addEventListener('click', ()=>{
         setFontScale(1.0);
       }
 
+      // 4.5. Pen Color Logic
+      let currentPenColor = localStorage.getItem('cml_pen_color') || 'black';
+      const penValEl = document.getElementById('cmlPenVal');
+      const penBlackBtn = document.getElementById('penBlackBtn');
+      const penBlueBtn = document.getElementById('penBlueBtn');
+
+      function setPenColor(color) {
+        currentPenColor = color;
+        localStorage.setItem('cml_pen_color', color);
+        
+        if (color === 'blue') {
+          document.documentElement.style.setProperty('--pen-color', '#0b3c96');
+          if (penValEl) penValEl.textContent = '파랑 (Blue)';
+          if (penBlackBtn) {
+            penBlackBtn.style.background = '#f1f5f9';
+            penBlackBtn.style.color = '#1e293b';
+            penBlackBtn.style.borderColor = '#cbd5e1';
+          }
+          if (penBlueBtn) {
+            penBlueBtn.style.background = '#0b3c96';
+            penBlueBtn.style.color = '#fff';
+            penBlueBtn.style.borderColor = '#0b3c96';
+          }
+        } else {
+          document.documentElement.style.setProperty('--pen-color', '#1e293b');
+          if (penValEl) penValEl.textContent = '검정 (Black)';
+          if (penBlackBtn) {
+            penBlackBtn.style.background = '#1e293b';
+            penBlackBtn.style.color = '#fff';
+            penBlackBtn.style.borderColor = '#1e293b';
+          }
+          if (penBlueBtn) {
+            penBlueBtn.style.background = '#f1f5f9';
+            penBlueBtn.style.color = '#0b3c96';
+            penBlueBtn.style.borderColor = '#cbd5e1';
+          }
+        }
+      }
+
+      setPenColor(currentPenColor);
+
       // 5. Button Listeners
       btnEl.addEventListener('click', function(e) {
         e.stopPropagation();
@@ -2360,9 +2415,13 @@ document.getElementById('quizAnswerBtn').addEventListener('click', ()=>{
       document.getElementById('fontOutBtn').addEventListener('click', () => setFontScale(currentFontScale - 0.05));
       document.getElementById('fontInBtn').addEventListener('click', () => setFontScale(currentFontScale + 0.05));
 
+      if (penBlackBtn) penBlackBtn.addEventListener('click', () => setPenColor('black'));
+      if (penBlueBtn) penBlueBtn.addEventListener('click', () => setPenColor('blue'));
+
       document.getElementById('settingsResetBtn').addEventListener('click', () => {
         setZoom(1.0);
         setFontScale(1.0);
+        setPenColor('black');
       });
       
       // Auto-fit on window resize (to handle orientation change)
