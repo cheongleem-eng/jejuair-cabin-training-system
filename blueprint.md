@@ -42,9 +42,9 @@
   - 아이폰 등 좁은 뷰포트에서 버튼 텍스트가 세로로 쪼개지는 현상 방지 (`white-space: nowrap`, 모바일 크기 대폭 축소) 및 **LOG PAGE NO** 등 상단 정보 영역의 가로 짤림 방지 (`flex-shrink: 0`, 모바일 정렬 개선).
 - **CML 가로배치 모바일 최적화**: 모바일 세로 레이아웃에서 LOG PAGE NO, HL, DATE 박스들이 길게 세로로 나열되던 현상을 가로 한 줄(Row, wrap 허용) 정렬로 개선하고 컴팩트하게 리사이징.
 - **CML 작성 가이드 모달 팝업 구현**:
-  - 기존의 PDF Blob 다운로드 방식 대신, Mozilla `PDF.js` 라이브러리를 CDN에서 동적 로드하여 Base64 가이드 리소스를 모달 팝업 내 `<canvas>`에 직접 페이지별 인라인 렌더링.
-  - Glassmorphic 블러 처리된 세련된 배경 위에 이전(◀), 다음(▶) 버튼을 탑재하여 슬라이드 넘김 효과 연출.
-  - 돋보기 줌인/줌아웃(🔍 +, 🔍 -) 기능을 기본 탑재하여 작은 스마트폰 화면에서도 디테일한 항목 조작이 용이하도록 UX 대폭 증대.
+  * 기존의 PDF.js 및 Base64 바이너리 인라인 렌더링 방식 대신, 사용자가 업로드한 2장짜리 최신 가이드 이미지(`guide1.jpg`, `guide2.jpg`)를 모달 팝업 내 `<img>` 태그를 활용해 빠르게 단독 로딩하도록 최적화했습니다.
+  * 모달 내 이전/다음(이전, 다음) 버튼 클릭 시 2페이지를 자유롭게 슬라이드하듯 양방향 전환(Page Flipping)하여 열람할 수 있습니다.
+  * 돋보기 줌인/줌아웃(🔍 +, 🔍 -) 기능을 기본 유지하여 이미지 크기를 50% ~ 200% 배율로 확대/축소하고, 스크롤하며 세부 내용을 편리하게 읽을 수 있도록 동적 크기 계산 알고리즘을 연결하여 UX 편의성을 제고했습니다.
 
 ### 목표: 통합 포털 5가지 메뉴 아이콘(이모티콘) 및 디자인 조화 개선 (Portal Menu Icons & Style Harmonization) - 완료 (Completed)
 - 5가지 메뉴의 아이콘을 각 기능에 부합하고 통일감 있는 Phosphor Fill 아이콘으로 일원화 (PRAM: Megaphone, Interphone: Phone Call, CML: Wrench, Emergency Role-Playing: Siren, Open Chat: Chats Circle).
