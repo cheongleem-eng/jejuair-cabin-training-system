@@ -1236,10 +1236,10 @@ blocks.forEach((blockProblems, bIdx)=>{
     </div>`;
   tr.appendChild(tdCor);
 
-  // CHECKED BY PURSER - 비활성화
+  // CHECKED BY PURSER
   const tdChk = document.createElement('td');
   tdChk.className = 'checkedby-cell';
-  tdChk.innerHTML = `<input type="text" class="field" disabled>`;
+  tdChk.innerHTML = `<input type="text" class="field validate" data-type="checkedby" data-block="${bIdx}">`;
   tr.appendChild(tdChk);
 
   tbody.appendChild(tr);
