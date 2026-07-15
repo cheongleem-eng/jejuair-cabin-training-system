@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -1025,7 +1025,7 @@
     <h2>CABIN MAINTENANCE LOG</h2>
     <div class="score">점수: <span class="num" id="scoreNum">0 / 0</span></div>
     <div style="display:flex; gap:8px; align-items:center;">
-      <a id="guideLink" href="#" target="_blank" rel="noopener" class="btn btn-ghost" style="text-decoration:none; display:inline-flex; align-items:center;">CML 작성 가이드</a>
+      <a id="guideLink" href="#" target="_blank" rel="noopener" class="btn btn-ghost" style="text-decoration:none; display:inline-flex; align-items:center;">작성 가이드</a>
       <button class="btn btn-ghost" id="quizOpenBtn">랜덤 문제</button>
       <button class="btn btn-primary" id="checkBtn">채점하기</button>
       <button class="btn btn-ghost" id="resetBtn">다시 풀기</button>
@@ -2028,6 +2028,13 @@ document.getElementById('quizAnswerBtn').addEventListener('click', ()=>{
 </script>
 
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const pages = ['guide1.jpg', 'guide2.jpg'];
+    const linkBtn = document.getElementById('guideLink');
+    const overlay = document.getElementById('guideModalOverlay');
+    const closeBtn = document.getElementById('guideModalCloseBtn');
+    const img = document.getElementById('guideImage');
+    const pageNumText = document.getElementById('pageNumText');
     let pageNum = 1;
     let currentScale = 1.0;
 
@@ -2075,28 +2082,40 @@ document.getElementById('quizAnswerBtn').addEventListener('click', ()=>{
       });
     }
 
-    document.getElementById('guidePrevBtn').addEventListener('click', function() {
-      if (pageNum <= 1) return;
-      pageNum--;
-      renderPage(pageNum);
-    });
+    const prevBtn = document.getElementById('guidePrevBtn');
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function() {
+        if (pageNum <= 1) return;
+        pageNum--;
+        renderPage(pageNum);
+      });
+    }
 
-    document.getElementById('guideNextBtn').addEventListener('click', function() {
-      if (pageNum >= pages.length) return;
-      pageNum++;
-      renderPage(pageNum);
-    });
+    const nextBtn = document.getElementById('guideNextBtn');
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function() {
+        if (pageNum >= pages.length) return;
+        pageNum++;
+        renderPage(pageNum);
+      });
+    }
 
-    document.getElementById('guideZoomInBtn').addEventListener('click', function() {
-      currentScale += 0.15;
-      updateZoom();
-    });
+    const zoomInBtn = document.getElementById('guideZoomInBtn');
+    if (zoomInBtn) {
+      zoomInBtn.addEventListener('click', function() {
+        currentScale += 0.15;
+        updateZoom();
+      });
+    }
 
-    document.getElementById('guideZoomOutBtn').addEventListener('click', function() {
-      currentScale = Math.max(0.5, currentScale - 0.15);
-      updateZoom();
-    });
-  })();
+    const zoomOutBtn = document.getElementById('guideZoomOutBtn');
+    if (zoomOutBtn) {
+      zoomOutBtn.addEventListener('click', function() {
+        currentScale = Math.max(0.5, currentScale - 0.15);
+        updateZoom();
+      });
+    }
+  });
 </script>
 
   <button class="cml-settings-btn" id="cmlSettingsBtn" title="화면/글씨 조절">
@@ -2112,7 +2131,7 @@ document.getElementById('quizAnswerBtn').addEventListener('click', ()=>{
       </div>
       <div class="guide-modal-body" style="overflow: auto;">
         <div class="canvas-wrapper" style="max-width: 100%; display: flex; justify-content: center; align-items: flex-start; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
-          <img id="guideImage" src="cml1.jpg" style="width: 100%; height: auto; display: block;" alt="Guide Page">
+          <img id="guideImage" src="guide1.jpg" style="width: 100%; height: auto; display: block;" alt="Guide Page">
         </div>
       </div>
       <div class="guide-modal-footer">
