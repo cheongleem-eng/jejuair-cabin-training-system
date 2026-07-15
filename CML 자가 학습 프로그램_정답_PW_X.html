@@ -501,6 +501,24 @@
     .toolbar h2 {
       font-size: 15px;
     }
+    .guide-modal-footer {
+      padding: 8px 10px !important;
+    }
+    .guide-zoom-controls button {
+      padding: 4px 8px !important;
+      font-size: 11px !important;
+    }
+    .guide-page-controls {
+      gap: 6px !important;
+    }
+    .guide-page-controls button {
+      min-width: 50px !important;
+      padding: 4px 8px !important;
+      font-size: 11px !important;
+    }
+    #pageNumText {
+      font-size: 11px !important;
+    }
   }
   /* ---- 랜덤 문제 풀기 패널 ---- */
   .quiz-panel{
@@ -2140,9 +2158,9 @@ document.addEventListener('DOMContentLoaded', function() {
           <button id="guideZoomInBtn" title="확대">🔍 +</button>
         </div>
         <div class="guide-page-controls">
-          <button class="btn btn-ghost" id="guidePrevBtn" style="min-width: 80px; padding: 6px 12px; font-size: 12px;">이전</button>
+          <button class="btn btn-ghost" id="guidePrevBtn">이전</button>
           <span id="pageNumText">1 / 2</span>
-          <button class="btn btn-ghost" id="guideNextBtn" style="min-width: 80px; padding: 6px 12px; font-size: 12px;">다음</button>
+          <button class="btn btn-ghost" id="guideNextBtn">다음</button>
         </div>
       </div>
     </div>
