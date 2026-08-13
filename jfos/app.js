@@ -113,12 +113,16 @@ document.addEventListener('DOMContentLoaded', function () {
             } catch (e) { }
         }
         now.setHours(now.getHours() + 1); // SHOW UP = KST + 1 hour
+        now.setMinutes(Math.round(now.getMinutes() / 10) * 10);
+        now.setSeconds(0);
         return now;
     }
 
     function getSyncTimeDate() {
         const now = new Date();
         now.setHours(now.getHours() + 1);
+        now.setMinutes(Math.round(now.getMinutes() / 10) * 10);
+        now.setSeconds(0);
         return now;
     }
 
