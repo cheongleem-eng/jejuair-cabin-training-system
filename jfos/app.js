@@ -94,11 +94,15 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // --- Get Current Time String (Satellite Time: 1 hour later than KST) ---
-    async function getSatelliteTimeString() {
+    // --- Date/Time Helpers ---
+    function formatTimeStr(dateObj) {
+        const hours = String(dateObj.getHours()).padStart(2, '0');
+        const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+        return `${hours}:${minutes}`;
+    }
+
+    async function getSatelliteTimeDate() {
         let now = new Date();
-        
-        // Try fetching online network time if available
         if (navigator.onLine) {
             try {
                 const res = await fetch('https://worldtimeapi.org/api/timezone/Asia/Seoul', { cache: 'no-store' });
@@ -106,39 +110,61 @@ document.addEventListener('DOMContentLoaded', function () {
                     const data = await res.json();
                     now = new Date(data.datetime);
                 }
-            } catch (e) {
-                // Fallback to system local time if fetch fails
-                now = new Date();
-            }
+            } catch (e) { }
         }
-        
-        // Add 1 hour (한국 시간 기준 + 1시간)
-        now.setHours(now.getHours() + 1);
-        
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        return `${hours}:${minutes}`;
+        now.setHours(now.getHours() + 1); // SHOW UP = KST + 1 hour
+        return now;
     }
 
-    function getCurrentTimeStringSync() {
+    function getSyncTimeDate() {
         const now = new Date();
         now.setHours(now.getHours() + 1);
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        return `${hours}:${minutes}`;
+        return now;
     }
 
-    // --- Auto Update Initial SHOW UP Time (KST + 1 Hour) ---
+    // --- Dynamic Flight Times (1h 20m after Show Up) ---
+    function updateDynamicFlightTimes(showUpDate) {
+        const addMin = (d, m) => new Date(d.getTime() + m * 60000);
+        
+        // 1. GMP/CJU: STD = ShowUp + 1h20m (80m), STA = STD + 1h10m (70m)
+        const std1 = addMin(showUpDate, 80);
+        const sta1 = addMin(std1, 70);
+        
+        // 2. CJU/PUS: STD = STA1 + 35m, STA = STD + 60m
+        const std2 = addMin(sta1, 35);
+        const sta2 = addMin(std2, 60);
+
+        // 3. PUS/CJU: STD = STA2 + 40m, STA = STD + 60m
+        const std3 = addMin(sta2, 40);
+        const sta3 = addMin(std3, 60);
+
+        // 4. CJU/GMP: STD = STA3 + 35m, STA = STD + 70m
+        const std4 = addMin(sta3, 35);
+        const sta4 = addMin(std4, 70);
+
+        const setTime = (selector, std, sta) => {
+            const el = document.querySelector(selector);
+            if (el) el.textContent = `${formatTimeStr(std)} / ${formatTimeStr(sta)}`;
+        };
+
+        setTime('.std-sta-1', std1, sta1);
+        setTime('.std-sta-2', std2, sta2);
+        setTime('.std-sta-3', std3, sta3);
+        setTime('.std-sta-4', std4, sta4);
+    }
+
+    // --- Auto Update Initial SHOW UP Time ---
     async function updateInitialShowUpTime() {
         const targetCell = document.querySelector('.flight-table .showup-time');
         if (targetCell && !showUpCompleted) {
-            // First display local system time instantly
-            targetCell.textContent = getCurrentTimeStringSync();
+            let syncDate = getSyncTimeDate();
+            targetCell.textContent = formatTimeStr(syncDate);
+            updateDynamicFlightTimes(syncDate);
             
-            // Then fetch precise network time if available
-            const timeStr = await getSatelliteTimeString();
+            const satDate = await getSatelliteTimeDate();
             if (!showUpCompleted) {
-                targetCell.textContent = timeStr;
+                targetCell.textContent = formatTimeStr(satDate);
+                updateDynamicFlightTimes(satDate);
             }
         }
     }
@@ -168,9 +194,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 const targetCell = document.querySelector('.flight-table .showup-time');
                 if (targetCell) {
-                    const timeStr = await getSatelliteTimeString();
+                    const satDate = await getSatelliteTimeDate();
+                    const timeStr = formatTimeStr(satDate);
                     targetCell.innerHTML = `<span class="timestamp-display">${timeStr}</span>`;
                     targetCell.classList.add('showup-success');
+                    updateDynamicFlightTimes(satDate);
                 }
                 
                 // 저장 완료 팝업
