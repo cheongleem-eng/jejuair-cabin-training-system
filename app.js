@@ -295,9 +295,8 @@ function showModule(moduleId) {
     document.getElementById('screen-jfos').classList.add('active');
     setTimeout(() => {
       const iframe = document.getElementById('iframe-jfos');
-      if (!iframe.src || iframe.src === window.location.href || iframe.src === 'about:blank') {
-        iframe.src = 'jfos/login.html'; // 내부 jfos 폴더의 로그인 화면으로 연결
-      }
+      // 항상 로그인 페이지부터 시작하도록 강제 초기화
+      iframe.src = 'jfos/login.html';
     }, 100);
   } else if (moduleId === 'chat-lobby') {
     document.getElementById('screen-chat-lobby').classList.add('active');
