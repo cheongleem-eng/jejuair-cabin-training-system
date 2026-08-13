@@ -185,6 +185,35 @@ document.addEventListener('DOMContentLoaded', function () {
         myPassportChk.click();
     });
 
+    // --- Update CREW INFO Table (Im Hullyeon Row) ---
+    const crewShowUpIm = document.getElementById('crewShowUpIm');
+    const crewPassportIm = document.getElementById('crewPassportIm');
+
+    function updateCrewStatus() {
+        if (crewShowUpIm) {
+            if (showUpCompleted) {
+                crewShowUpIm.textContent = 'O';
+                crewShowUpIm.style.color = '#007bff';
+                crewShowUpIm.style.fontWeight = 'bold';
+            } else {
+                crewShowUpIm.textContent = 'X';
+                crewShowUpIm.style.color = '';
+                crewShowUpIm.style.fontWeight = '';
+            }
+        }
+        if (crewPassportIm) {
+            if (passportCompleted) {
+                crewPassportIm.textContent = 'O';
+                crewPassportIm.style.color = '#007bff';
+                crewPassportIm.style.fontWeight = 'bold';
+            } else {
+                crewPassportIm.textContent = 'X';
+                crewPassportIm.style.color = '';
+                crewPassportIm.style.fontWeight = '';
+            }
+        }
+    }
+
     // --- Checkbox Direct Click Handlers ---
     myShowUpChk.addEventListener('click', function (e) {
         e.preventDefault(); // 기본 체크 동작 차단
@@ -195,6 +224,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // 확인 클릭 시
                 myShowUpChk.checked = true;
                 showUpCompleted = true;
+                updateCrewStatus();
                 
                 const targetCell = document.querySelector('.flight-table .showup-time');
                 if (targetCell) {
@@ -214,6 +244,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // 체크 해제는 즉시 반영
             myShowUpChk.checked = false;
             showUpCompleted = false;
+            updateCrewStatus();
             const targetCell = document.querySelector('.flight-table .showup-time');
             if (targetCell) {
                 updateInitialShowUpTime();
@@ -231,6 +262,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // 확인 클릭 시
                 myPassportChk.checked = true;
                 passportCompleted = true;
+                updateCrewStatus();
                 
                 // 저장 완료 팝업
                 setTimeout(() => {
@@ -241,6 +273,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // 체크 해제는 즉시 반영
             myPassportChk.checked = false;
             passportCompleted = false;
+            updateCrewStatus();
         }
     });
 
