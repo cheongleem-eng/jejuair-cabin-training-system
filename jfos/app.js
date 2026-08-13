@@ -159,13 +159,11 @@ document.addEventListener('DOMContentLoaded', function () {
     myShowUpChk.addEventListener('click', function (e) {
         e.preventDefault(); // 기본 체크 동작 차단
         
-        const isChecking = !this.checked; // 현재 상태의 반대 (클릭했을 때의 목표 상태)
-        
-        if (isChecking) {
+        if (!showUpCompleted) {
             // 체크하려고 할 때 팝업
             createConfirmModal("", "S/U을 체크하시겠습니까?", async () => {
                 // 확인 클릭 시
-                this.checked = true;
+                myShowUpChk.checked = true;
                 showUpCompleted = true;
                 
                 const targetCell = document.querySelector('.flight-table .showup-time');
@@ -181,8 +179,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 }, 100);
             });
         } else {
-            // 체크 해제는 즉시 반영 (또는 여기서도 물어볼 수 있음)
-            this.checked = false;
+            // 체크 해제는 즉시 반영
+            myShowUpChk.checked = false;
             showUpCompleted = false;
             const targetCell = document.querySelector('.flight-table .showup-time');
             if (targetCell) {
@@ -195,13 +193,11 @@ document.addEventListener('DOMContentLoaded', function () {
     myPassportChk.addEventListener('click', function (e) {
         e.preventDefault(); // 기본 체크 동작 차단
         
-        const isChecking = !this.checked;
-        
-        if (isChecking) {
+        if (!passportCompleted) {
             // 체크하려고 할 때 팝업
             createConfirmModal("", "PASSPORT를 체크하시겠습니까?", () => {
                 // 확인 클릭 시
-                this.checked = true;
+                myPassportChk.checked = true;
                 passportCompleted = true;
                 
                 // 저장 완료 팝업
@@ -211,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         } else {
             // 체크 해제는 즉시 반영
-            this.checked = false;
+            myPassportChk.checked = false;
             passportCompleted = false;
         }
     });
