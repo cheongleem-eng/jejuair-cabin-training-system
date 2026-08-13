@@ -290,6 +290,15 @@ function showModule(moduleId) {
       const iframe = document.getElementById('iframe-cml');
       iframe.src = 'CML 자가 학습 프로그램_정답_PW_X.html';
     }, 100);
+  } else if (moduleId === 'jfos') {
+    // JFOS: 외부 앱 연결을 위해 바로 메인 화면으로 이동
+    document.getElementById('screen-jfos').classList.add('active');
+    setTimeout(() => {
+      const iframe = document.getElementById('iframe-jfos');
+      if (!iframe.src || iframe.src === window.location.href || iframe.src === 'about:blank') {
+        iframe.src = 'jfos/login.html'; // 내부 jfos 폴더의 로그인 화면으로 연결
+      }
+    }, 100);
   } else if (moduleId === 'chat-lobby') {
     document.getElementById('screen-chat-lobby').classList.add('active');
     initChatLobby();

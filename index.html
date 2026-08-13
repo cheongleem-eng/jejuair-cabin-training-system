@@ -50,6 +50,20 @@
       </div>
 
       <div class="portal-container">
+        <!-- Module 0: JFOS -->
+        <div class="portal-card portal-card--jfos" onclick="showModule('jfos')">
+          <div class="card-icon-wrap">
+            <i class="ph-fill ph-identification-badge"></i>
+          </div>
+          <div class="card-info">
+            <h3 class="card-title">JFOS</h3>
+            <p class="card-desc">승무원 출두 보고 시스템</p>
+          </div>
+          <div class="card-arrow">
+            <i class="ph ph-caret-right"></i>
+          </div>
+        </div>
+
         <!-- Module 1: PRAM -->
         <div class="portal-card" onclick="showModule('pram')">
           <div class="card-icon-wrap">
@@ -310,6 +324,28 @@
           </button>
         </div>
       </div>
+    </div>
+  </div>
+
+
+
+  <!-- ===================== JFOS MAIN SCREEN ===================== -->
+  <div id="screen-jfos" class="screen">
+    <header class="app-header">
+      <div class="header-left">
+        <button class="btn-icon" onclick="goHome()">
+          <i class="ph ph-caret-left"></i>
+        </button>
+      </div>
+      <div class="header-center"><i class="ph-fill ph-identification-badge"></i> JFOS 출두 보고</div>
+      <div class="header-right">
+        <button class="btn-icon" onclick="goHome()">
+          <i class="ph ph-house"></i>
+        </button>
+      </div>
+    </header>
+    <div class="iframe-container">
+      <iframe id="iframe-jfos" src="" frameborder="0"></iframe>
     </div>
   </div>
 

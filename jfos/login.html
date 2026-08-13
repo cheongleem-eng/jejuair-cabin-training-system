@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="JFOS - 제주항공 운항통제 시스템 로그인">
+    <title>JFOS - 제주항공 운항통제 시스템</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+
+<body>
+    <div class="login-wrapper">
+
+        <!-- ===== LEFT PANEL ===== -->
+        <div class="left-panel">
+            <img src="jofs_main.png" alt="JFOS Main" class="jofs-main-img">
+            
+            <!-- User Info (Hidden initially) -->
+            <div id="loggedInUser" style="display: none; position: absolute; bottom: 80px; width: 100%; text-align: center; font-size: 12px; font-weight: bold; color: #333; z-index: 10;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="#333" style="vertical-align: middle; margin-right: 2px;">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>김제주 님
+            </div>
+        </div>
+
+        <!-- ===== RIGHT PANEL ===== -->
+        <div class="right-panel">
+            <div class="right-inner">
+
+                <!-- LOGIN title -->
+                <div class="login-title-block">
+                    <h2 class="login-title">LOGIN</h2>
+                    <div class="login-underline"></div>
+                </div>
+
+                <!-- Login Form -->
+                <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
+                    <!-- ID Field -->
+                    <div class="input-group">
+                        <span class="input-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <circle cx="8" cy="5.5" r="3" stroke="#aaa" stroke-width="1.3" />
+                                <path d="M2 13.5C2 11 4.7 9 8 9s6 2 6 4.5" stroke="#aaa" stroke-width="1.3"
+                                    stroke-linecap="round" />
+                            </svg>
+                        </span>
+                        <input type="text" id="userId" class="login-input" placeholder="사번을 입력하세요"
+                            autocomplete="username">
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="input-group">
+                        <span class="input-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <rect x="3" y="7" width="10" height="8" rx="1.5" stroke="#aaa" stroke-width="1.3" />
+                                <path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" stroke="#aaa" stroke-width="1.3"
+                                    stroke-linecap="round" />
+                                <circle cx="8" cy="11" r="1" fill="#aaa" />
+                            </svg>
+                        </span>
+                        <input type="password" id="userPw" class="login-input" placeholder="비밀번호를 입력하세요"
+                            autocomplete="current-password">
+                    </div>
+
+                    <!-- Error message -->
+                    <div class="error-msg" id="errorMsg"></div>
+
+                    <!-- Login Button -->
+                    <button type="submit" class="login-btn" id="loginBtn">로그인</button>
+                </form>
+
+                <!-- Menu Panel (Hidden initially) -->
+                <div id="menuPanel" class="menu-panel" style="display: none;">
+                    
+                    <!-- FPL (Disabled) -->
+                    <div class="menu-item disabled">
+                        <div class="hexagon-box">
+                            <svg class="hex-svg" viewBox="0 0 100 110">
+                                <polygon points="50,2 98,27 98,83 50,108 2,83 2,27" fill="white" stroke="#e0e0e0" stroke-width="2"/>
+                            </svg>
+                            <div class="hex-content">
+                                <div class="icon-group">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="1.2" stroke-dasharray="3 3">
+                                        <circle cx="12" cy="12" r="9"/>
+                                        <polygon points="12,1 15,3 12,5" fill="#777" stroke="none"/>
+                                        <polygon points="23,12 21,9 21,15" fill="#777" stroke="none"/>
+                                    </svg>
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="#777" class="center-icon" style="transform: rotate(45deg);">
+                                        <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                                    </svg>
+                                </div>
+                                <div class="hex-title">FPL</div>
+                            </div>
+                        </div>
+                        <div class="menu-desc">Flight Plan</div>
+                    </div>
+
+                    <!-- CREW -->
+                    <div class="menu-item" onclick="window.location.href='jfos_main.html'" style="cursor: pointer;">
+                        <div class="hexagon-box">
+                            <svg class="hex-svg" viewBox="0 0 100 110">
+                                <polygon points="50,2 98,27 98,83 50,108 2,83 2,27" fill="white" stroke="#e0e0e0" stroke-width="2"/>
+                            </svg>
+                            <div class="hex-content">
+                                <div class="icon-group">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="1.2">
+                                        <path d="M12 3 A 9 9 0 1 0 21 12" />
+                                        <polygon points="21,3 21,8 16,8" stroke="none" fill="#777" />
+                                        <path d="M21 12 L21 3" stroke-dasharray="none" />
+                                    </svg>
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="#777" class="center-icon">
+                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                    </svg>
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="#777" class="gear-icon">
+                                        <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                                    </svg>
+                                </div>
+                                <div class="hex-title">CREW</div>
+                            </div>
+                        </div>
+                        <div class="menu-desc">Crew Information</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function handleLogin(e) {
+            e.preventDefault();
+
+            const userId = document.getElementById('userId').value.trim();
+            const userPw = document.getElementById('userPw').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+
+            if (!userId || !userPw) {
+                errorMsg.textContent = '사번과 비밀번호를 입력해 주세요.';
+                return;
+            }
+
+            errorMsg.textContent = '';
+
+            // Animate button
+            const btn = document.getElementById('loginBtn');
+            btn.textContent = '로그인 중...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                // Instead of direct redirect, show menu panel
+                document.getElementById('loginForm').style.display = 'none';
+                document.querySelector('.login-title-block').style.display = 'none';
+                document.getElementById('menuPanel').style.display = 'flex';
+                document.getElementById('loggedInUser').style.display = 'block';
+            }, 600);
+        }
+
+        // Allow Enter key on both inputs
+        document.getElementById('userId').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') document.getElementById('userPw').focus();
+        });
+    </script>
+</body>
+
+</html>

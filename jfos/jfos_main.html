@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="JFOS Main Page">
+    <title>제주항공 운항통제 시스템 - 메인</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', 'Segoe UI', Arial, sans-serif;
+            background-color: #d8d8d8;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100%;
+            padding: 10px;
+        }
+
+        /* 메인 컨테이너 */
+        .main-container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border: 1px solid #b0b0b0;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 이미지 컨테이너 — position:relative 필수 */
+        .image-section {
+            position: relative;
+            width: 100%;
+            display: block;
+        }
+
+        /* 이미지는 부모 너비에 맞춰 자동 높이 */
+        .page-img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* 메뉴 버튼 오버레이 컨테이너
+           upper.png 기준: 전체 높이의 상단 약 30% 영역이 메뉴바
+           left 37% = 로고+CREW 영역 건너뜀 */
+        .nav-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 74%;   /* 메뉴바 + 서브 영역 */
+            display: flex;
+            align-items: stretch;
+            z-index: 10;
+            padding-left: 37%;
+        }
+
+        /* 개별 메뉴 버튼 */
+        .nav-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: clamp(8px, 1.4vw, 13px);
+            font-weight: 500;
+            color: #222;
+            cursor: default;
+            user-select: none;
+            margin: 5% 0.3% 2% 0.3%;
+            background-color: transparent;
+        }
+
+        .nav-btn.inactive {
+            pointer-events: none;
+        }
+
+        .nav-btn.active {
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        .nav-btn.active:active {
+            background-color: rgba(0, 0, 0, 0.06);
+            border-radius: 4px;
+        }
+
+        /* ===== 모바일 & 태블릿 ===== */
+        @media (max-width: 768px) {
+            body {
+                padding: 0;
+                background: white;
+            }
+
+            .main-container {
+                border: none;
+                box-shadow: none;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Upper 이미지 영역 -->
+        <div class="image-section">
+            <img src="upper.png" alt="Upper Menu" class="page-img">
+
+            <!-- 메뉴 버튼 오버레이: HOME / Show Up / Crew Notice / Qualification -->
+            <nav class="nav-overlay" aria-label="메인 메뉴">
+                <!-- HOME: 비활성 -->
+                <span class="nav-btn inactive" title="HOME"></span>
+
+                <!-- Show Up: 활성 (index.html로 이동) -->
+                <a href="index.html" class="nav-btn active" title="Show Up 페이지로 이동"></a>
+
+                <!-- Crew Notice: 비활성 -->
+                <span class="nav-btn inactive" title="Crew Notice"></span>
+
+                <!-- Qualification: 비활성 -->
+                <span class="nav-btn inactive" title="Qualification"></span>
+            </nav>
+        </div>
+
+        <!-- Lower 이미지 영역 -->
+        <div class="image-section">
+            <img src="lower.png" alt="Lower Info" class="page-img">
+        </div>
+    </div>
+</body>
+</html>

@@ -654,11 +654,14 @@ body::before {
 .card-arrow { color: rgba(255,255,255,0.4); font-size: 20px; }
 
 /* 각 모듈별 아이콘 박스 컬러 포인트 (통일감 속의 다양성) */
-.portal-card:nth-child(1) .card-icon-wrap { background: linear-gradient(135deg, #FF5000, #FF8A00); box-shadow: 0 4px 12px rgba(255, 80, 0, 0.3); }
+/* JFOS는 portal-card--jfos 클래스로 별도 지정 */
+.portal-card--jfos .card-icon-wrap { background: linear-gradient(135deg, #FF5000, #FF8A00) !important; box-shadow: 0 4px 15px rgba(255, 80, 0, 0.45) !important; }
 .portal-card:nth-child(2) .card-icon-wrap { background: linear-gradient(135deg, #0284C7, #0EA5E9); box-shadow: 0 4px 12px rgba(2, 132, 201, 0.3); }
 .portal-card:nth-child(3) .card-icon-wrap { background: linear-gradient(135deg, #10B981, #34D399); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
 .portal-card:nth-child(4) .card-icon-wrap { background: linear-gradient(135deg, #EF4444, #F87171); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
 .portal-card:nth-child(5) .card-icon-wrap { background: linear-gradient(135deg, #8B5CF6, #A78BFA); box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); }
+.portal-card:nth-child(6) .card-icon-wrap { background: linear-gradient(135deg, #F59E0B, #FBBF24); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); }
+
 
 .portal-card.highlight .card-title { color: white; }
 
@@ -1389,3 +1392,4 @@ body::before {
   animation: spin 0.8s linear infinite;
   display: inline-block;
 }
+
