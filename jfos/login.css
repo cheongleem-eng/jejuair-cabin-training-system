@@ -53,19 +53,7 @@ body {
     left: 0;
 }
 
-/* User Info Overlay */
-#loggedInUser {
-    position: absolute;
-    bottom: 20px;
-    width: 100%;
-    text-align: center;
-    font-size: 13px;
-    font-weight: bold;
-    color: #333;
-    z-index: 10;
-    background: rgba(255,255,255,0.75);
-    padding: 6px 0;
-}
+
 
 /* ===== RIGHT PANEL ===== */
 .right-panel {
