@@ -302,7 +302,8 @@ function showModule(moduleId) {
     document.getElementById('screen-jangbi').classList.add('active');
     setTimeout(() => {
       const iframe = document.getElementById('iframe-jangbi');
-      if (!iframe.src || !iframe.src.includes('jangbi/')) iframe.src = 'jangbi/index.html';
+      // 들어올 때마다 새로 로드 → 이름·사번 입력부터 다시 시작
+      iframe.src = 'jangbi/index.html?t=' + Date.now();
     }, 100);
   } else if (moduleId === 'chat-lobby') {
     document.getElementById('screen-chat-lobby').classList.add('active');

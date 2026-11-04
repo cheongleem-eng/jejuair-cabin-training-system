@@ -22,27 +22,119 @@
   };
 
   /* ---------------- 공통 ---------------- */
-  function norm(s) {
-    return String(s || '').normalize('NFC').toLowerCase()
-      .replace(/[\s'"‘’“”`·.,()\[\]{}\-~/]/g, '');
+  /* ---------------- 채점 (정답 폭 넓게) ----------------
+     1) 띄어쓰기·대소문자·기호 무시
+     2) 헷갈리는 모음 통일: ㅐ/ㅒ/ㅖ → ㅔ, ㅙ/ㅚ → ㅞ
+     3) 영어 ↔ 한글 발음 표기 동일 취급 (Trigger = 트리거)
+     4) 숫자: 3 = 셋 = 세 = 삼, 2개 = 두 개, 40초 = 사십초, 2~3분 = 2에서 3분 */
+  const TRANSLIT = {
+    activate: ['액티베이트', '액티베잇', '액티브에이트', '액티베이터'],
+    off: ['오프', '옾'], test: ['테스트', '테스투'], pass: ['패스', '파스'], fail: ['페일', '페이루'],
+    armed: ['암드', '아암드', '알므드', '아므드'], tx: ['티엑스'], rx: ['알엑스'],
+    ped: ['피이디', '피디'], fak: ['팩', '에프에이케이'], upk: ['유피케이'], emk: ['이엠케이'],
+    inop: ['이놉', '아이놉', '인옵', '이납'], seal: ['씰', '실'], galley: ['갤리', '갤러리'],
+    bracket: ['브라켓', '브래킷', '브라킷', '브래캣', '브라켇', '브래켓'],
+    trigger: ['트리거', '트리가', '트리그'], lever: ['레버', '레바', '리버'], pin: ['핀'],
+    snap: ['스냅'], side: ['사이드'], overwing: ['오버윙'],
+    lanyard: ['랜야드', '래니어드', '랜이어드', '래냐드', '랜야아드', '레니어드', '랜니어드'],
+    inflation: ['인플레이션'], handle: ['핸들'],
+    survival: ['서바이벌', '써바이벌', '서바이블', '서바이바루'], kit: ['키트', '킷', '킽'],
+    canopy: ['캐노피', '카노피', '캐너피', '카노삐'], escape: ['이스케이프', '에스케이프', '이스케잎'],
+    device: ['디바이스', '디바이즈'], boarding: ['보딩', '보오딩', '보딩그'], station: ['스테이션', '스테이숀'],
+    view: ['뷰'], finder: ['파인더', '화인더'], hi: ['하이', '에이치아이'], position: ['포지션', '포지숀', '포지쎤'],
+    green: ['그린'], area: ['에어리어', '에리어', '에어리아', '에리아', '아레아'],
+    indicator: ['인디케이터', '인디게이터', '인디케이타'],
+    biohazard: ['바이오해저드', '바이오하자드', '바이오해자드', '바이오하저드'], bag: ['백', '배그', '빽'],
+    hood: ['후드'], actuation: ['액추에이션', '액츄에이션', '액튜에이션'], ring: ['링'],
+    starter: ['스타터', '스타트', '스타타'], candle: ['캔들', '캔덜'], toggle: ['토글'],
+    body: ['바디', '보디'], belt: ['벨트'], neck: ['넥', '넼'],
+    siren: ['사이렌'], mask: ['마스크'], cartridge: ['카트리지', '카트릿지'], spark: ['스파크'],
+    monitoring: ['모니터링'], band: ['밴드'], chain: ['체인'], tube: ['튜브'], gown: ['가운'],
+    a: ['에이'], b: ['비'], c: ['씨', '시'], d: ['디']
+  };
+
+  // 한글 모음 통일
+  function foldVowels(s) {
+    let out = '';
+    for (const ch of s) {
+      const c = ch.charCodeAt(0);
+      if (c >= 0xAC00 && c <= 0xD7A3) {
+        const o = c - 0xAC00, cho = Math.floor(o / 588), jung = Math.floor((o % 588) / 28), jong = o % 28;
+        let j = jung;
+        if (j === 1 || j === 3 || j === 7) j = 5;      // ㅐ ㅒ ㅖ → ㅔ
+        else if (j === 10 || j === 11) j = 15;         // ㅙ ㅚ → ㅞ
+        out += String.fromCharCode(0xAC00 + cho * 588 + j * 28 + jong);
+      } else out += ch;
+    }
+    return out;
   }
+
+  const TRANSLIT_PAIRS = Object.entries(TRANSLIT)
+    .flatMap(([en, kos]) => kos.map(ko => [foldVowels(ko), en]))
+    .sort((x, y) => y[0].length - x[0].length);
+
+  function base(s) {
+    return foldVowels(String(s || '').normalize('NFC').toLowerCase()
+      .replace(/[\s'"‘’“”`·.,:;!?()\[\]{}\/]/g, ''));
+  }
+  function canon(s) {
+    let t = base(s);
+    for (const [ko, en] of TRANSLIT_PAIRS) if (t.includes(ko)) t = t.split(ko).join(en);
+    return t.replace(/[-~～_]/g, '');
+  }
+
+  // 숫자 비교용: 한글 숫자 → 아라비아 숫자, 단위 통일
+  const NATIVE = [['열하나', 11], ['열한', 11], ['열둘', 12], ['열두', 12], ['열셋', 13], ['열세', 13], ['열넷', 14], ['열네', 14],
+    ['열다섯', 15], ['열여섯', 16], ['열일곱', 17], ['열여덟', 18], ['열아홉', 19],
+    ['스물', 20], ['서른', 30], ['마흔', 40], ['쉰', 50], ['예순', 60], ['일흔', 70], ['여든', 80], ['아흔', 90], ['열', 10], ['아홉', 9], ['여덟', 8], ['일곱', 7], ['여섯', 6], ['다섯', 5],
+    ['넷', 4], ['네', 4], ['셋', 3], ['세', 3], ['석', 3], ['둘', 2], ['두', 2], ['하나', 1], ['한', 1]];
+  const SINO = { 일: 1, 이: 2, 삼: 3, 사: 4, 오: 5, 육: 6, 륙: 6, 칠: 7, 팔: 8, 구: 9 };
+  // "백오십사" → 154, "이삼" → "2~3"
+  function sinoToNum(w) {
+    const out = []; let total = 0, cur = 0, hasCur = false;
+    for (const ch of w) {
+      if (ch in SINO) {
+        if (hasCur) { out.push(total + cur); total = 0; }
+        cur = SINO[ch]; hasCur = true;
+      } else {
+        const m = ch === '십' ? 10 : ch === '백' ? 100 : 1000;
+        total += (hasCur ? cur : 1) * m; cur = 0; hasCur = false;
+      }
+    }
+    out.push(total + cur);
+    return out.join('~');
+  }
+  function numParts(s) {
+    let t = String(s || '').normalize('NFC').toLowerCase()
+      .replace(/[\s'"‘’“”`·.,:;!?()\[\]{}\/]/g, '')
+      .replace(/리터|ℓ/g, 'l').replace(/미터/g, 'm').replace(/킬로그램|키로그램|킬로|키로/g, 'kg')
+      .replace(/번/g, '회').replace(/장/g, '매')
+      .replace(/(에서|부터|[-～])/g, '~');
+    for (const [w, n] of NATIVE) t = t.split(w).join(String(n));
+    t = t.replace(/[일이삼사오육륙칠팔구십백천]+/g, sinoToNum);
+    const nums = t.match(/\d+(\.\d+)?/g) || [];
+    const unit = foldVowels(t.replace(/\d+(\.\d+)?/g, '').replace(/[~약]/g, ''));
+    return { nums, unit };
+  }
+  function numEqual(ans, val) {
+    const a = numParts(ans), v = numParts(val);
+    if (!a.nums.length || a.nums.join(',') !== v.nums.join(',')) return false;
+    return v.unit === '' || v.unit === a.unit || (a.unit && v.unit.startsWith(a.unit));
+  }
+
   function isCorrect(blank, value) {
-    const v = norm(value);
+    const v = canon(value);
     if (!v) return false;
-    return blank.ok.some(a => norm(a) === v);
+    return blank.ok.some(a => canon(a) === v || (/\d/.test(a) && numEqual(a, value)));
   }
   function groupById(id) { return DATA.find(g => g.id === id); }
   function blankCount(g) { return g.images.reduce((n, im) => n + im.blanks.length, 0); }
   function key(gid, ii, bi) { return gid + '|' + ii + '|' + bi; }
   function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 
-  function save() { try { sessionStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) { /* 저장 불가 시 무시 */ } }
-  function load() {
-    try {
-      const raw = sessionStorage.getItem(STORE_KEY);
-      if (raw) { const s = JSON.parse(raw); if (s && typeof s === 'object') state = Object.assign(state, s); }
-    } catch (e) { /* 무시 */ }
-  }
+  // 시험 내용은 저장하지 않음: 포털에서 뒤로 나갔다 들어오면 이름·사번부터 새로 시작
+  function save() { /* 의도적으로 저장 안 함 */ }
+  function clearOld() { try { sessionStorage.removeItem(STORE_KEY); } catch (e) { /* 무시 */ } }
 
   let toastTimer = null;
   function toast(msg) {
@@ -335,15 +427,10 @@
 
   /* ---------------- 시작 ---------------- */
   function init() {
-    load();
-    // 데이터가 바뀌어 저장된 시험과 맞지 않으면 초기화
-    if (state.exam && !state.exam.every(sec => groupById(sec.gid))) { state.exam = null; state.submitted = false; }
-    state.selected = (state.selected || []).filter(id => groupById(id));
+    clearOld();
     bindSelect(); bindExam(); bindResult();
     renderSelect();
-    if (state.exam && state.submitted) openResult();
-    else if (state.exam) openExam();
-    else show('select');
+    show('select');
   }
   document.addEventListener('DOMContentLoaded', init);
 })();
