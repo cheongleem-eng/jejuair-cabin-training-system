@@ -171,7 +171,6 @@
         <span class="equip-icon"><i class="ph-fill ${g.icon}"></i></span>
         <span class="equip-info">
           <span class="equip-title">${esc(g.title)}</span>
-          <span class="equip-sub">${esc(g.sub)}</span>
         </span>
         <span class="equip-check"><i class="ph-bold ph-check"></i></span>
       </button>`).join('');

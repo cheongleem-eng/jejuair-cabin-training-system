@@ -173,7 +173,7 @@
           [21, 4, "매달려", "매달려"]
         ] }
       ] },
-    { "id": "survivalkit", "title": "구명정 서바이벌 키트", "sub": "구명정 부속장비 (Survival Kit)", "icon": "ph-backpack",
+    { "id": "survivalkit", "title": "Life Raft Survival Kit", "sub": "구명정 부속장비 (Survival Kit)", "icon": "ph-backpack",
       "images": [
         { "src": "raft3.png", "ocr": "life raft3", "blanks": [
           [4, 6, "수색구조를", "수색구조"],
