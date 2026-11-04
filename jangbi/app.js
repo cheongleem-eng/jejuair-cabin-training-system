@@ -152,6 +152,12 @@
     return a;
   }
 
+  // 지금 치는 시험 타입 표시: "TYPE C · CHK 정답 확인" / "TYPE A · 실전"
+  function setTypeBadge(el) {
+    el.textContent = 'TYPE ' + state.level + ' · ' + (state.chk ? 'CHK 정답 확인' : '실전');
+    el.classList.toggle('chk', state.chk);
+  }
+
   // 난이도별 무작위 출제 비율: [핵심 단어 비율, 나머지 단어 비율]
   const LEVELS = { A: [0.75, 0], B: [0.9, 0.25], C: [0.95, 0.5] };
   function pickBlanks(im, level) {
@@ -292,6 +298,7 @@
 
   function openExam() {
     $('#exam-name').textContent = state.name + (state.emp ? ' (' + state.emp + ')' : '');
+    setTypeBadge($('#exam-type'));
     show('exam');
     renderPage();
   }
@@ -396,6 +403,7 @@
     const r = grade();
     $('#res-name').textContent = state.name;
     $('#res-emp').textContent = state.emp ? '사번 ' + state.emp : '';
+    setTypeBadge($('#res-type'));
     $('#res-date').textContent = '응시 ' + fmtDate(state.startedAt) + '  ·  제출 ' + fmtDate(state.finishedAt);
     $('#res-score').textContent = r.score;
     const ring = $('#score-ring');

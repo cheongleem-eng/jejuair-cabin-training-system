@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>비상장비 TEST</title>
-  <link rel="stylesheet" href="style.css?v=1.4" />
+  <link rel="stylesheet" href="style.css?v=1.5" />
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 </head>
 <body>
@@ -64,7 +64,7 @@
   <!-- ===================== 2. 시험 ===================== -->
   <section id="view-exam" class="view">
     <div class="exam-top glass-dark">
-      <div class="exam-who"><i class="ph-fill ph-user"></i> <span id="exam-name"></span></div>
+      <div class="exam-who"><i class="ph-fill ph-user"></i> <span id="exam-name"></span> <b id="exam-type" class="type-badge"></b></div>
       <div id="exam-tabs" class="exam-tabs"></div>
     </div>
     <div id="exam-body" class="exam-body"></div>
@@ -85,6 +85,7 @@
           <span id="res-emp" class="res-emp"></span>
         </div>
         <p id="res-date" class="res-date"></p>
+        <p><b id="res-type" class="type-badge"></b></p>
         <div class="score-ring" id="score-ring">
           <div class="score-inner">
             <span id="res-score" class="res-score">0</span><span class="res-unit">점</span>
@@ -107,6 +108,6 @@
   <div id="toast" class="toast"></div>
 
   <script src="data.js?v=1.6"></script>
-  <script src="app.js?v=1.5"></script>
+  <script src="app.js?v=1.6"></script>
 </body>
 </html>
