@@ -103,7 +103,7 @@ body::before {
 .equip.on .equip-check { background: var(--jeju-orange); border-color: var(--jeju-orange); color: #fff; }
 
 /* ---------- Segmented ---------- */
-.seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 16px; }
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 16px; }
 .seg button {
   padding: 11px 0; border: none; border-radius: 12px; background: transparent; color: rgba(255,255,255,0.7);
   font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer;

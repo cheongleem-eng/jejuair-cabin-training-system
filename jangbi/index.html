@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>비상장비 TEST</title>
-  <link rel="stylesheet" href="style.css?v=1.2" />
+  <link rel="stylesheet" href="style.css?v=1.3" />
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 </head>
 <body>
@@ -42,14 +42,13 @@
       </div>
 
       <div class="glass panel">
-        <h2 class="panel-title"><i class="ph-fill ph-sliders-horizontal"></i> 빈칸 수</h2>
+        <h2 class="panel-title"><i class="ph-fill ph-sliders-horizontal"></i> 난이도</h2>
         <div id="level-seg" class="seg">
-          <button type="button" data-level="0.3">적게</button>
-          <button type="button" data-level="0.5" class="on">보통</button>
-          <button type="button" data-level="0.75">많이</button>
-          <button type="button" data-level="1">전체</button>
+          <button type="button" data-level="A" class="on">A</button>
+          <button type="button" data-level="B">B</button>
+          <button type="button" data-level="C">C</button>
         </div>
-        <p class="hint">빈칸은 시험마다 중요한 단어 중에서 무작위로 정해집니다.</p>
+        <p class="hint">A → C로 갈수록 빈칸이 많아집니다. C는 조사·어미만 남기고 거의 다 비웁니다.</p>
       </div>
 
       <button id="btn-start" class="btn-primary" type="button"><i class="ph-bold ph-play"></i> 시험 시작</button>
@@ -102,7 +101,7 @@
 
   <div id="toast" class="toast"></div>
 
-  <script src="data.js?v=1.3"></script>
-  <script src="app.js?v=1.2"></script>
+  <script src="data.js?v=1.4"></script>
+  <script src="app.js?v=1.3"></script>
 </body>
 </html>

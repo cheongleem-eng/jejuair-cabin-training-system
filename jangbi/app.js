@@ -12,7 +12,7 @@
   const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
 
   let state = {
-    name: '', emp: '', level: 0.5,
+    name: '', emp: '', level: 'A',
     selected: [],       // 선택한 장비 id 목록 (화면 순서 유지)
     exam: null,         // [{ gid, images: [{ ii, picks: [blankIndex...] }] }]
     answers: {},        // key "g|i|b" -> 입력값
@@ -152,6 +152,17 @@
     return a;
   }
 
+  // 난이도: A = 핵심 단어의 75%, B = 핵심 단어 전부 + 나머지 단어 40%, C = 조사·어미 빼고 거의 전부
+  function pickBlanks(im, level) {
+    const core = [], extra = [];
+    im.blanks.forEach((b, i) => (b.e ? extra : core).push(i));
+    let picks;
+    if (level === 'C') picks = core.concat(extra);
+    else if (level === 'B') picks = core.concat(shuffle(extra).slice(0, Math.round(extra.length * 0.4)));
+    else picks = shuffle(core).slice(0, Math.min(core.length, Math.max(2, Math.round(core.length * 0.75))));
+    return picks.sort((a, b) => a - b);
+  }
+
   /* ---------------- 1. 장비 선택 ---------------- */
   function renderSelect() {
     const grid = $('#equip-grid');
@@ -166,7 +177,7 @@
       </button>`).join('');
     $('#in-name').value = state.name;
     $('#in-emp').value = state.emp;
-    $$('#level-seg button').forEach(b => b.classList.toggle('on', parseFloat(b.dataset.level) === state.level));
+    $$('#level-seg button').forEach(b => b.classList.toggle('on', b.dataset.level === state.level));
     updateSelCount();
   }
 
@@ -191,7 +202,7 @@
     });
     $('#level-seg').addEventListener('click', e => {
       const b = e.target.closest('button'); if (!b) return;
-      state.level = parseFloat(b.dataset.level);
+      state.level = b.dataset.level;
       $$('#level-seg button').forEach(x => x.classList.toggle('on', x === b));
     });
     $('#btn-start').addEventListener('click', startExam);
@@ -212,10 +223,7 @@
       return {
         gid,
         images: g.images.map((im, ii) => {
-          const n = im.blanks.length;
-          const k = Math.min(n, Math.max(2, Math.round(n * state.level)));
-          const picks = shuffle(im.blanks.map((_, i) => i)).slice(0, k).sort((a, b) => a - b);
-          return { ii, picks };
+          return { ii, picks: pickBlanks(im, state.level) };
         })
       };
     });

@@ -1,6 +1,8 @@
 param([string]$Spec, [string]$OcrDir, [string]$ImgSrcDir, [string]$OutDir, [string]$DebugDir)
 Add-Type -AssemblyName System.Drawing
 $specObj = Get-Content -Raw -Encoding utf8 $Spec | ConvertFrom-Json
+$fullPath = Join-Path (Split-Path $Spec) 'full.json'; $fullObj = $null
+if (Test-Path $fullPath) { $fullObj = Get-Content -Raw -Encoding utf8 $fullPath | ConvertFrom-Json }
 $srcMap = @{ 'aed.png'='aed.png'; 'containment-bag.png'='containment bag.png'; 'elt1.png'='elt1.png'; 'elt2.png'='elt2.png'; 'emk.png'='emk.png'; 'fak.png'='fak.png';
   'fire-glove.png'='fire glove.png'; 'flashlight.png'='flash light.png'; 'h2o.png'='h2o.png'; 'halon.png'='halon.png'; 'raft1.png'='life raft1.png'; 'raft2.png'='life raft2.png';
   'raft3.png'='life raft3.png'; 'raft4.png'='life raft4.png'; 'megaphone.png'='megaphone.png'; 'pbe.png'='pbe.png'; 'po2.png'='PO2.png'; 'upk.png'='upk.png' }
@@ -46,6 +48,41 @@ foreach ($g in $specObj.groups) {
       $gr.DrawRectangle($pen, [float]$x, [float]$y, [float]$w, [float]$h)
       $all = @($ans) + $alts + @($full -replace '[\s]','') | Select-Object -Unique
       $blanksOut += [ordered]@{ x=$x; y=$y; w=$w; h=$h; a=$ans; ok=@($all) }
+    }
+    # ---- level C extras: every bracketed word from full.json, skipping ones overlapping curated blanks
+    $fl = $null; if ($fullObj) { $fl = $fullObj.PSObject.Properties[$im.ocr] }
+    if ($fl) {
+      $pen2 = New-Object System.Drawing.Pen ([System.Drawing.Color]::Blue), 1
+      foreach ($lp in $fl.Value.PSObject.Properties) {
+        $L = [int]$lp.Name; $parts = $lp.Value -split ' \| '
+        $words = $ocr.lines[$L].words
+        if ($parts.Count -ne $words.Count) { $warn += "FULL $($im.ocr) L${L}: $($parts.Count) parts vs $($words.Count) words"; continue }
+        for ($wi=0; $wi -lt $parts.Count; $wi++) {
+          $raw = $parts[$wi]; if ($raw -notmatch '\[') { continue }
+          # plain text (brackets removed, alts removed) and segments
+          $plain = ''; $segs = @(); $pos = 0
+          foreach ($m in [regex]::Matches($raw, '\[([^\]]*)\]|[^\[]+')) {
+            if ($m.Groups[1].Success) { $bits = $m.Groups[1].Value -split '='; $s=$plain.Length; $plain += $bits[0]; $segs += ,@($s, $plain.Length, $bits) }
+            else { $plain += $m.Value }
+          }
+          $wd = $words[$wi]; $sx=[double]$wd.x; $span=[double]$wd.w
+          $chars = $plain.ToCharArray(); $tot=0; foreach ($c in $chars) { $tot += (W $c) }
+          foreach ($sg in $segs) {
+            $pre=0; $mid=0
+            for ($k=0; $k -lt $chars.Length; $k++) { $wt = W $chars[$k]; if ($k -lt $sg[0]) { $pre+=$wt } elseif ($k -lt $sg[1]) { $mid+=$wt } }
+            $pad=1.5
+            $x=[math]::Round($sx + $span*($pre/$tot) - $pad,1); $y=[math]::Round([double]$wd.y - $pad,1)
+            $w=[math]::Round($span*($mid/$tot) + 2*$pad,1); $h=[math]::Round([double]$wd.h + 2*$pad,1)
+            $hit = $false
+            foreach ($cb in $blanksOut) { if ($cb.e) { continue }
+              $ix = [math]::Min($x+$w, $cb.x+$cb.w) - [math]::Max($x, $cb.x); $iy = [math]::Min($y+$h, $cb.y+$cb.h) - [math]::Max($y, $cb.y)
+              if ($ix -gt 0 -and $iy -gt 0 -and ($ix*$iy) -gt 0.3*[math]::Min($w*$h, $cb.w*$cb.h)) { $hit = $true; break } }
+            if ($hit) { continue }
+            $gr.DrawRectangle($pen2, [float]$x, [float]$y, [float]$w, [float]$h)
+            $blanksOut += [ordered]@{ x=$x; y=$y; w=$w; h=$h; a=$sg[2][0]; ok=@($sg[2] | Select-Object -Unique); e=1 }
+          }
+        }
+      }
     }
     $gr.Dispose(); $canvas.Save((Join-Path $DebugDir $im.src)); $canvas.Dispose()
     $imgsOut += [ordered]@{ src="img/$($im.src)"; w=$ocr.width; h=$ocr.height; blanks=$blanksOut }
