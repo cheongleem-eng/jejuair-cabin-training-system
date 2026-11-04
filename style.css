@@ -661,6 +661,7 @@ body::before {
 .portal-card:nth-child(4) .card-icon-wrap { background: linear-gradient(135deg, #EF4444, #F87171); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
 .portal-card:nth-child(5) .card-icon-wrap { background: linear-gradient(135deg, #8B5CF6, #A78BFA); box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); }
 .portal-card:nth-child(6) .card-icon-wrap { background: linear-gradient(135deg, #F59E0B, #FBBF24); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); }
+.portal-card:nth-child(7) .card-icon-wrap { background: linear-gradient(135deg, #0D9488, #2DD4BF); box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3); }
 
 
 .portal-card.highlight .card-title { color: white; }

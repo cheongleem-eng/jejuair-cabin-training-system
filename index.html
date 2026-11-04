@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>제주항공 객실훈련팀 통합포털</title>
-  <link rel="stylesheet" href="style.css?v=6.0" />
+  <link rel="stylesheet" href="style.css?v=6.1" />
   <!-- 🔥 Firebase SDK (compat version — Firebase Studio 호환) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -128,6 +128,20 @@
           <div class="card-info">
             <h3 class="card-title">Open Chat</h3>
             <p class="card-desc">실시간 정보 공유 및 소통 창구</p>
+          </div>
+          <div class="card-arrow">
+            <i class="ph ph-caret-right"></i>
+          </div>
+        </div>
+
+        <!-- Module 5: 비상장비 TEST -->
+        <div class="portal-card" onclick="showModule('jangbi')">
+          <div class="card-icon-wrap">
+            <i class="ph-fill ph-exam"></i>
+          </div>
+          <div class="card-info">
+            <h3 class="card-title">비상장비 TEST</h3>
+            <p class="card-desc">비상장비 교범 빈칸 채우기 평가</p>
           </div>
           <div class="card-arrow">
             <i class="ph ph-caret-right"></i>
@@ -407,6 +421,25 @@
     </div>
   </div>
 
+  <div id="screen-jangbi" class="screen">
+    <header class="app-header">
+      <div class="header-left">
+        <button class="btn-icon" onclick="goHome()">
+          <i class="ph ph-caret-left"></i>
+        </button>
+      </div>
+      <div class="header-center"><i class="ph-fill ph-exam"></i> 비상장비 TEST</div>
+      <div class="header-right">
+        <button class="btn-icon" onclick="goHome()">
+          <i class="ph ph-house"></i>
+        </button>
+      </div>
+    </header>
+    <div class="iframe-container">
+      <iframe id="iframe-jangbi" src="" frameborder="0"></iframe>
+    </div>
+  </div>
+
   <!-- ===================== CHAT LOBBY SCREEN ===================== -->
   <div id="screen-chat-lobby" class="screen">
     <header class="app-header">
@@ -515,6 +548,6 @@
   </div>
 
   <script src="main.js?v=6.0"></script>
-  <script src="app.js?v=6.0"></script>
+  <script src="app.js?v=6.1"></script>
   </body>
   </html>

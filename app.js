@@ -298,6 +298,12 @@ function showModule(moduleId) {
       // 항상 로그인 페이지부터 시작하도록 강제 초기화
       iframe.src = 'jfos/login.html';
     }, 100);
+  } else if (moduleId === 'jangbi') {
+    document.getElementById('screen-jangbi').classList.add('active');
+    setTimeout(() => {
+      const iframe = document.getElementById('iframe-jangbi');
+      if (!iframe.src || !iframe.src.includes('jangbi/')) iframe.src = 'jangbi/index.html';
+    }, 100);
   } else if (moduleId === 'chat-lobby') {
     document.getElementById('screen-chat-lobby').classList.add('active');
     initChatLobby();
@@ -763,6 +769,9 @@ function goHome() {
 
     const iframeCml = document.getElementById('iframe-cml');
     if (iframeCml) iframeCml.src = '';
+
+    const iframeJangbi = document.getElementById('iframe-jangbi');
+    if (iframeJangbi) iframeJangbi.src = '';
 
     hideAllScreens(); 
     document.getElementById('screen-portal').classList.add('active'); 

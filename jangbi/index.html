@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>비상장비 TEST</title>
+  <link rel="stylesheet" href="style.css?v=1.0" />
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+</head>
+<body>
+
+  <!-- ===================== 1. 장비 선택 ===================== -->
+  <section id="view-select" class="view active">
+    <div class="wrap">
+      <header class="hero">
+        <img src="../LOGO.png" alt="제주항공 로고" class="hero-logo">
+        <p class="hero-sub">Emergency Equipment Test</p>
+        <h1 class="hero-title">비상장비 TEST</h1>
+        <p class="hero-desc">사진 속 빈칸에 알맞은 내용을 입력하세요. 띄어쓰기는 채점하지 않습니다.</p>
+      </header>
+
+      <div class="glass panel">
+        <h2 class="panel-title"><i class="ph-fill ph-user-circle"></i> 응시자 정보</h2>
+        <div class="field-row">
+          <label class="field">
+            <span>이름</span>
+            <input id="in-name" type="text" placeholder="이름 입력" autocomplete="off" maxlength="20">
+          </label>
+          <label class="field">
+            <span>사번 <em>(선택)</em></span>
+            <input id="in-emp" type="text" placeholder="사번 입력" autocomplete="off" maxlength="20" inputmode="numeric">
+          </label>
+        </div>
+      </div>
+
+      <div class="glass panel">
+        <div class="panel-head">
+          <h2 class="panel-title"><i class="ph-fill ph-check-square-offset"></i> 시험 장비 선택 <span id="sel-count" class="count-pill">0개</span></h2>
+          <button id="btn-all" class="btn-ghost" type="button">전체 선택</button>
+        </div>
+        <div id="equip-grid" class="equip-grid"></div>
+      </div>
+
+      <div class="glass panel">
+        <h2 class="panel-title"><i class="ph-fill ph-sliders-horizontal"></i> 빈칸 수</h2>
+        <div id="level-seg" class="seg">
+          <button type="button" data-level="0.3">적게</button>
+          <button type="button" data-level="0.5" class="on">보통</button>
+          <button type="button" data-level="0.75">많이</button>
+          <button type="button" data-level="1">전체</button>
+        </div>
+        <p class="hint">빈칸은 시험마다 중요한 단어 중에서 무작위로 정해집니다.</p>
+      </div>
+
+      <button id="btn-start" class="btn-primary" type="button"><i class="ph-bold ph-play"></i> 시험 시작</button>
+      <p class="foot">© JEJU AIR Cabin Training Team</p>
+    </div>
+  </section>
+
+  <!-- ===================== 2. 시험 ===================== -->
+  <section id="view-exam" class="view">
+    <div class="exam-top glass-dark">
+      <div class="exam-who"><i class="ph-fill ph-user"></i> <span id="exam-name"></span></div>
+      <div id="exam-tabs" class="exam-tabs"></div>
+    </div>
+    <div id="exam-body" class="exam-body"></div>
+    <div class="exam-bottom glass-dark">
+      <button id="btn-prev" class="btn-nav" type="button"><i class="ph-bold ph-caret-left"></i> 이전</button>
+      <div id="exam-progress" class="exam-progress"></div>
+      <button id="btn-next" class="btn-nav btn-nav--main" type="button">다음 <i class="ph-bold ph-caret-right"></i></button>
+    </div>
+  </section>
+
+  <!-- ===================== 3. 결과 ===================== -->
+  <section id="view-result" class="view">
+    <div class="wrap">
+      <div class="glass panel result-card">
+        <p class="result-label">EMERGENCY EQUIPMENT TEST RESULT</p>
+        <div class="result-who">
+          <span id="res-name" class="res-name"></span>
+          <span id="res-emp" class="res-emp"></span>
+        </div>
+        <p id="res-date" class="res-date"></p>
+        <div class="score-ring" id="score-ring">
+          <div class="score-inner">
+            <span id="res-score" class="res-score">0</span><span class="res-unit">점</span>
+          </div>
+        </div>
+        <p id="res-count" class="res-count"></p>
+        <div id="res-table" class="res-table"></div>
+      </div>
+
+      <div class="result-actions">
+        <button id="btn-review" class="btn-primary" type="button"><i class="ph-bold ph-magnifying-glass"></i> 오답 확인</button>
+        <button id="btn-new" class="btn-secondary" type="button"><i class="ph-bold ph-arrow-counter-clockwise"></i> 새 시험</button>
+      </div>
+
+      <div id="review" class="review"></div>
+      <p class="foot">© JEJU AIR Cabin Training Team</p>
+    </div>
+  </section>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="data.js?v=1.0"></script>
+  <script src="app.js?v=1.0"></script>
+</body>
+</html>
