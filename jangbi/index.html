@@ -3,65 +3,65 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>비상장비 TEST</title>
+  <title>鍮꾩긽?λ퉬 TEST</title>
   <link rel="stylesheet" href="style.css?v=1.4" />
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 </head>
 <body>
 
-  <!-- ===================== 1. 장비 선택 ===================== -->
+  <!-- ===================== 1. ?λ퉬 ?좏깮 ===================== -->
   <section id="view-select" class="view active">
     <div class="wrap">
       <header class="hero">
-        <img src="../LOGO.png" alt="제주항공 로고" class="hero-logo">
+        <img src="../LOGO.png" alt="?쒖＜??났 濡쒓퀬" class="hero-logo">
         <p class="hero-sub">Emergency Equipment Test</p>
-        <h1 class="hero-title">비상장비 TEST</h1>
-        <p class="hero-desc">사진 속 빈칸에 알맞은 내용을 입력하세요. 띄어쓰기는 채점하지 않습니다.</p>
+        <h1 class="hero-title">鍮꾩긽?λ퉬 TEST</h1>
+        <p class="hero-desc">?ъ쭊 ??鍮덉뭏???뚮쭪? ?댁슜???낅젰?섏꽭?? ?꾩뼱?곌린??梨꾩젏?섏? ?딆뒿?덈떎.</p>
       </header>
 
       <div class="glass panel">
-        <h2 class="panel-title"><i class="ph-fill ph-user-circle"></i> 응시자 정보</h2>
+        <h2 class="panel-title"><i class="ph-fill ph-user-circle"></i> ?묒떆???뺣낫</h2>
         <div class="field-row">
           <label class="field">
-            <span>이름</span>
-            <input id="in-name" type="text" placeholder="이름 입력" autocomplete="off" maxlength="20">
+            <span>?대쫫</span>
+            <input id="in-name" type="text" placeholder="?대쫫 ?낅젰" autocomplete="off" maxlength="20">
           </label>
           <label class="field">
-            <span>사번 <em>(선택)</em></span>
-            <input id="in-emp" type="text" placeholder="사번 입력" autocomplete="off" maxlength="20" inputmode="numeric">
+            <span>?щ쾲 <em>(?좏깮)</em></span>
+            <input id="in-emp" type="text" placeholder="?щ쾲 ?낅젰" autocomplete="off" maxlength="20" inputmode="numeric">
           </label>
         </div>
       </div>
 
       <div class="glass panel">
         <div class="panel-head">
-          <h2 class="panel-title"><i class="ph-fill ph-check-square-offset"></i> 시험 장비 선택 <span id="sel-count" class="count-pill">0개</span></h2>
-          <button id="btn-all" class="btn-ghost" type="button">전체 선택</button>
+          <h2 class="panel-title"><i class="ph-fill ph-check-square-offset"></i> ?쒗뿕 ?λ퉬 ?좏깮 <span id="sel-count" class="count-pill">0媛?/span></h2>
+          <button id="btn-all" class="btn-ghost" type="button">?꾩껜 ?좏깮</button>
         </div>
         <div id="equip-grid" class="equip-grid"></div>
       </div>
 
       <div class="glass panel">
-        <h2 class="panel-title"><i class="ph-fill ph-sliders-horizontal"></i> 난이도</h2>
+        <h2 class="panel-title"><i class="ph-fill ph-sliders-horizontal"></i> ?쒖씠??/h2>
         <div id="level-seg" class="seg">
           <button type="button" data-level="A" class="on">A</button>
           <button type="button" data-level="B">B</button>
           <button type="button" data-level="C">C</button>
         </div>
-        <p class="hint">A → C로 갈수록 빈칸이 많아집니다. 빈칸은 매번 무작위로 정해집니다.</p>
+        <p class="hint">A ??C濡?媛덉닔濡?鍮덉뭏??留롮븘吏묐땲?? 鍮덉뭏? 留ㅻ쾲 臾댁옉?꾨줈 ?뺥빐吏묐땲??</p>
         <label class="chk-row">
           <input id="in-chk" type="checkbox">
           <span class="chk-box"><i class="ph-bold ph-check"></i></span>
-          <span class="chk-text"><b>CHK 정답 확인 모드</b><small>체크하면 입력하는 즉시 정답 칸이 초록색으로 바뀝니다. 체크하지 않으면 끝까지 빨간 칸으로 두고 마지막에 점수만 확인합니다.</small></span>
+          <span class="chk-text"><b>CHK ?뺣떟 ?뺤씤 紐⑤뱶</b><small>泥댄겕?섎㈃ ?낅젰?섎뒗 利됱떆 ?뺣떟 移몄씠 珥덈줉?됱쑝濡?諛붾앸땲?? 泥댄겕?섏? ?딆쑝硫??앷퉴吏 鍮④컙 移몄쑝濡??먭퀬 留덉?留됱뿉 ?먯닔留??뺤씤?⑸땲??</small></span>
         </label>
       </div>
 
-      <button id="btn-start" class="btn-primary" type="button"><i class="ph-bold ph-play"></i> 시험 시작</button>
-      <p class="foot">© JEJU AIR Cabin Training Team</p>
+      <button id="btn-start" class="btn-primary" type="button"><i class="ph-bold ph-play"></i> ?쒗뿕 ?쒖옉</button>
+      <p class="foot">짤 JEJU AIR Cabin Training Team</p>
     </div>
   </section>
 
-  <!-- ===================== 2. 시험 ===================== -->
+  <!-- ===================== 2. ?쒗뿕 ===================== -->
   <section id="view-exam" class="view">
     <div class="exam-top glass-dark">
       <div class="exam-who"><i class="ph-fill ph-user"></i> <span id="exam-name"></span></div>
@@ -69,13 +69,13 @@
     </div>
     <div id="exam-body" class="exam-body"></div>
     <div class="exam-bottom glass-dark">
-      <button id="btn-prev" class="btn-nav" type="button"><i class="ph-bold ph-caret-left"></i> 이전</button>
+      <button id="btn-prev" class="btn-nav" type="button"><i class="ph-bold ph-caret-left"></i> ?댁쟾</button>
       <div id="exam-progress" class="exam-progress"></div>
-      <button id="btn-next" class="btn-nav btn-nav--main" type="button">다음 <i class="ph-bold ph-caret-right"></i></button>
+      <button id="btn-next" class="btn-nav btn-nav--main" type="button">?ㅼ쓬 <i class="ph-bold ph-caret-right"></i></button>
     </div>
   </section>
 
-  <!-- ===================== 3. 결과 ===================== -->
+  <!-- ===================== 3. 寃곌낵 ===================== -->
   <section id="view-result" class="view">
     <div class="wrap">
       <div class="glass panel result-card">
@@ -87,7 +87,7 @@
         <p id="res-date" class="res-date"></p>
         <div class="score-ring" id="score-ring">
           <div class="score-inner">
-            <span id="res-score" class="res-score">0</span><span class="res-unit">점</span>
+            <span id="res-score" class="res-score">0</span><span class="res-unit">??/span>
           </div>
         </div>
         <p id="res-count" class="res-count"></p>
@@ -95,18 +95,18 @@
       </div>
 
       <div class="result-actions">
-        <button id="btn-review" class="btn-primary" type="button"><i class="ph-bold ph-magnifying-glass"></i> 오답 확인</button>
-        <button id="btn-new" class="btn-secondary" type="button"><i class="ph-bold ph-arrow-counter-clockwise"></i> 새 시험</button>
+        <button id="btn-review" class="btn-primary" type="button"><i class="ph-bold ph-magnifying-glass"></i> ?ㅻ떟 ?뺤씤</button>
+        <button id="btn-new" class="btn-secondary" type="button"><i class="ph-bold ph-arrow-counter-clockwise"></i> ???쒗뿕</button>
       </div>
 
       <div id="review" class="review"></div>
-      <p class="foot">© JEJU AIR Cabin Training Team</p>
+      <p class="foot">짤 JEJU AIR Cabin Training Team</p>
     </div>
   </section>
 
   <div id="toast" class="toast"></div>
 
-  <script src="data.js?v=1.5"></script>
+  <script src="data.js?v=1.6"></script>
   <script src="app.js?v=1.5"></script>
 </body>
 </html>
