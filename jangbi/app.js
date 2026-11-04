@@ -12,7 +12,7 @@
   const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
 
   let state = {
-    name: '', emp: '', level: 'A',
+    name: '', emp: '', level: 'A', chk: false,
     selected: [],       // 선택한 장비 id 목록 (화면 순서 유지)
     exam: null,         // [{ gid, images: [{ ii, picks: [blankIndex...] }] }]
     answers: {},        // key "g|i|b" -> 입력값
@@ -152,14 +152,14 @@
     return a;
   }
 
-  // 난이도: A = 핵심 단어의 75%, B = 핵심 단어 전부 + 나머지 단어 40%, C = 조사·어미 빼고 거의 전부
+  // 난이도별 무작위 출제 비율: [핵심 단어 비율, 나머지 단어 비율]
+  const LEVELS = { A: [0.75, 0], B: [0.9, 0.25], C: [0.95, 0.5] };
   function pickBlanks(im, level) {
     const core = [], extra = [];
     im.blanks.forEach((b, i) => (b.e ? extra : core).push(i));
-    let picks;
-    if (level === 'C') picks = core.concat(extra);
-    else if (level === 'B') picks = core.concat(shuffle(extra).slice(0, Math.round(extra.length * 0.4)));
-    else picks = shuffle(core).slice(0, Math.min(core.length, Math.max(2, Math.round(core.length * 0.75))));
+    const [rc, re] = LEVELS[level] || LEVELS.A;
+    const nc = Math.min(core.length, Math.max(2, Math.round(core.length * rc)));
+    const picks = shuffle(core).slice(0, nc).concat(shuffle(extra).slice(0, Math.round(extra.length * re)));
     return picks.sort((a, b) => a - b);
   }
 
@@ -178,6 +178,7 @@
     $('#in-name').value = state.name;
     $('#in-emp').value = state.emp;
     $$('#level-seg button').forEach(b => b.classList.toggle('on', b.dataset.level === state.level));
+    $('#in-chk').checked = state.chk;
     updateSelCount();
   }
 
@@ -205,6 +206,7 @@
       state.level = b.dataset.level;
       $$('#level-seg button').forEach(x => x.classList.toggle('on', x === b));
     });
+    $('#in-chk').addEventListener('change', e => { state.chk = e.target.checked; });
     $('#btn-start').addEventListener('click', startExam);
   }
 
@@ -250,7 +252,7 @@
         const ok = isCorrect(b, val);
         cls += ok ? ' ok' : ' ng' + (val ? '' : ' empty');
         if (!ok) extra = `<span class="correct">${esc(b.a)}</span>`;
-      } else cls += isCorrect(b, val) ? ' live-ok' : ' live-ng';   // 입력 즉시 정답이면 초록, 아니면 빨강
+      } else cls += state.chk && isCorrect(b, val) ? ' live-ok' : ' live-ng';   // CHK 켜면 입력 즉시 정답이면 초록, 끄면 끝까지 빨강
       return `<div class="${cls}" style="${style}" data-h="${b.h}">
         <input type="text" data-k="${k}" value="${esc(val)}" ${mode === 'review' ? 'readonly tabindex="-1"' : ''}
           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="next" aria-label="빈칸">${extra}</div>`;
@@ -337,7 +339,7 @@
       const inp = e.target; if (!inp.dataset.k) return;
       state.answers[inp.dataset.k] = inp.value;
       const [gid, ii, bi] = inp.dataset.k.split('|');
-      const ok = isCorrect(groupById(gid).images[+ii].blanks[+bi], inp.value);
+      const ok = state.chk && isCorrect(groupById(gid).images[+ii].blanks[+bi], inp.value);
       inp.parentElement.classList.toggle('live-ok', ok);
       inp.parentElement.classList.toggle('live-ng', !ok);
       save(); renderProgress();
