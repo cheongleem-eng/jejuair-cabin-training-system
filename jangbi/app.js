@@ -242,7 +242,7 @@
         const ok = isCorrect(b, val);
         cls += ok ? ' ok' : ' ng' + (val ? '' : ' empty');
         if (!ok) extra = `<span class="correct">${esc(b.a)}</span>`;
-      } else if (val) cls += ' filled';
+      } else cls += isCorrect(b, val) ? ' live-ok' : ' live-ng';   // 입력 즉시 정답이면 초록, 아니면 빨강
       return `<div class="${cls}" style="${style}" data-h="${b.h}">
         <input type="text" data-k="${k}" value="${esc(val)}" ${mode === 'review' ? 'readonly tabindex="-1"' : ''}
           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="next" aria-label="빈칸">${extra}</div>`;
@@ -328,7 +328,10 @@
     body.addEventListener('input', e => {
       const inp = e.target; if (!inp.dataset.k) return;
       state.answers[inp.dataset.k] = inp.value;
-      inp.parentElement.classList.toggle('filled', !!inp.value.trim());
+      const [gid, ii, bi] = inp.dataset.k.split('|');
+      const ok = isCorrect(groupById(gid).images[+ii].blanks[+bi], inp.value);
+      inp.parentElement.classList.toggle('live-ok', ok);
+      inp.parentElement.classList.toggle('live-ng', !ok);
       save(); renderProgress();
     });
     body.addEventListener('change', () => renderTabs());

@@ -164,8 +164,13 @@ body::before {
   width: 100%; min-width: 0; border: none; outline: none; background: transparent;
   color: #1E3A8A; font-family: inherit; font-weight: 800; text-align: center; padding: 0 2px;
 }
-.blank.filled { background: #EEF2FF; border-color: #6366F1; box-shadow: none; }
-.blank:focus-within { z-index: 3; min-width: 7em; background: #fff; border-color: var(--jeju-orange); box-shadow: 0 0 0 3px rgba(255,80,0,0.35); }
+/* 시험 중 실시간 표시: 정답이면 초록, 아니면(빈칸 포함) 빨강 */
+.blank.live-ng { background: #FEF2F2; border-color: var(--ng); box-shadow: 0 1px 4px rgba(239,68,68,0.25); }
+.blank.live-ng input { color: #B91C1C; }
+.blank.live-ok { background: #ECFDF5; border-color: var(--ok); box-shadow: 0 1px 4px rgba(16,185,129,0.3); }
+.blank.live-ok input { color: #047857; }
+.blank:focus-within { z-index: 3; min-width: 7em; background: #fff; box-shadow: 0 0 0 3px rgba(239,68,68,0.3); }
+.blank.live-ok:focus-within { background: #fff; box-shadow: 0 0 0 3px rgba(16,185,129,0.35); }
 
 /* review state */
 .blank.ok { background: #ECFDF5; border-color: var(--ok); box-shadow: none; }
