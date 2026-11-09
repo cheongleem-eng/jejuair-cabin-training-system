@@ -11,6 +11,18 @@
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
 
+  // 관리자 모드 PIN (바꾸려면 여기만 수정)
+  const ADMIN_PIN = '1234';
+  const DISABLED_KEY = 'jangbi-disabled-v1';   // 오프라인 대비 로컬 캐시
+  let db = null;                                // Firestore (jangbi_settings/disabled)
+  let disabled = new Set();                     // 출제 제외된 빈칸 id
+
+  // 빈칸마다 안정적인 id: 장비|사진|정답#몇번째  (data.js를 다시 만들어도 유지됨)
+  DATA.forEach(g => g.images.forEach(im => {
+    const seen = {}; const base = im.src.replace(/^.*\//, '').replace(/\.png$/, '');
+    im.blanks.forEach(b => { const n = seen[b.a] = (seen[b.a] || 0) + 1; b.id = `${g.id}|${base}|${b.a}#${n}`; });
+  }));
+
   let state = {
     name: '', emp: '', level: 'A', chk: false,
     selected: [],       // 선택한 장비 id 목록 (화면 순서 유지)
@@ -162,7 +174,7 @@
   const LEVELS = { A: [0.75, 0], B: [0.9, 0.25], C: [0.95, 0.5] };
   function pickBlanks(im, level) {
     const core = [], extra = [];
-    im.blanks.forEach((b, i) => (b.e ? extra : core).push(i));
+    im.blanks.forEach((b, i) => { if (!disabled.has(b.id)) (b.e ? extra : core).push(i); });   // 관리자가 제외한 빈칸은 A·B·C 모두에서 빠짐
     const [rc, re] = LEVELS[level] || LEVELS.A;
     const nc = Math.min(core.length, Math.max(2, Math.round(core.length * rc)));
     const picks = shuffle(core).slice(0, nc).concat(shuffle(extra).slice(0, Math.round(extra.length * re)));
@@ -213,6 +225,109 @@
     });
     $('#in-chk').addEventListener('change', e => { state.chk = e.target.checked; });
     $('#btn-start').addEventListener('click', startExam);
+    $('#btn-admin').addEventListener('click', () => {
+      const pin = prompt('관리자 PIN을 입력하세요');
+      if (pin === null) return;
+      if (pin.trim() !== ADMIN_PIN) { toast('PIN이 맞지 않습니다'); return; }
+      openAdmin();
+    });
+  }
+
+  /* ---------------- 출제 제외 목록 (Firestore 공유 + 로컬 캐시) ---------------- */
+  function initFirebase() {
+    try {
+      if (typeof firebase === 'undefined' || !window.JEJU_FIREBASE_CONFIG) return;
+      if (!firebase.apps.length) firebase.initializeApp(window.JEJU_FIREBASE_CONFIG);
+      db = firebase.firestore();
+    } catch (e) { console.warn('Firebase 연결 실패:', e.message); db = null; }
+  }
+  function disabledDoc() { return db ? db.collection('jangbi_settings').doc('disabled') : null; }
+  function cacheDisabled() { try { localStorage.setItem(DISABLED_KEY, JSON.stringify([...disabled])); } catch (e) { /* 무시 */ } }
+  function updateAdminBadge() { $('#adm-badge').textContent = disabled.size ? `제외 ${disabled.size}` : ''; }
+  async function loadDisabled() {
+    try { disabled = new Set(JSON.parse(localStorage.getItem(DISABLED_KEY) || '[]')); } catch (e) { disabled = new Set(); }
+    updateAdminBadge();
+    const ref = disabledDoc(); if (!ref) return;
+    try {
+      const snap = await ref.get();
+      if (snap.exists && Array.isArray(snap.data().ids)) { disabled = new Set(snap.data().ids); cacheDisabled(); updateAdminBadge(); }
+    } catch (e) { console.warn('제외 목록 불러오기 실패(로컬 캐시 사용):', e.message); }
+  }
+  async function saveDisabled() {
+    cacheDisabled(); updateAdminBadge();
+    const ref = disabledDoc();
+    if (!ref) { toast('이 기기에만 저장됨 (서버 연결 없음)'); return false; }
+    try {
+      await ref.set({ ids: [...disabled], count: disabled.size, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+      toast('저장 완료 · 모든 패드에 적용됩니다'); return true;
+    } catch (e) { console.warn('저장 실패:', e.message); toast('서버 저장 실패 · 이 기기에만 저장됨'); return false; }
+  }
+
+  /* ---------------- 4. 관리자: 단어 눌러서 출제 제외 ---------------- */
+  const adm = { gid: null, work: null, dirty: false };
+  function openAdmin() {
+    adm.gid = DATA[0].id; adm.work = new Set(disabled); adm.dirty = false;
+    show('admin'); renderAdmin();
+  }
+  function chipHTML(gid, ii) {
+    const im = groupById(gid).images[ii];
+    return im.blanks.map(b => {
+      const style = `left:${(b.x / im.w * 100).toFixed(3)}%;top:${(b.y / im.h * 100).toFixed(3)}%;width:${(b.w / im.w * 100).toFixed(3)}%;height:${(b.h / im.h * 100).toFixed(3)}%`;
+      const cls = 'chip ' + (b.e ? 'extra' : 'core') + (adm.work.has(b.id) ? ' off' : '');
+      return `<button type="button" class="${cls}" style="${style}" data-h="${b.h}" data-id="${esc(b.id)}" title="${esc(b.a)}">${esc(b.a)}</button>`;
+    }).join('');
+  }
+  function admCounts() {
+    const g = groupById(adm.gid); let here = 0;
+    g.images.forEach(im => im.blanks.forEach(b => { if (adm.work.has(b.id)) here++; }));
+    return { here, all: adm.work.size };
+  }
+  function renderAdminMeta() {
+    const { here, all } = admCounts();
+    $('#adm-count').innerHTML = `이 장비 <b>${here}</b>개 · 전체 <b>${all}</b>개 제외`;
+    $('#adm-save').classList.toggle('dirty', adm.dirty);
+    $('#adm-status').textContent = adm.dirty ? '변경됨 — 저장을 눌러야 모든 패드에 적용됩니다' : '단어를 누르면 A·B·C 모든 시험에서 빠집니다';
+    $('#adm-tabs').innerHTML = DATA.map(g => {
+      let n = 0; g.images.forEach(im => im.blanks.forEach(b => { if (adm.work.has(b.id)) n++; }));
+      return `<button type="button" class="tab${g.id === adm.gid ? ' on' : ''}" data-g="${g.id}">${esc(g.title)}${n ? ` <span class="tab-n">-${n}</span>` : ''}</button>`;
+    }).join('');
+    const on = $('#adm-tabs .tab.on'); if (on) on.scrollIntoView({ block: 'nearest', inline: 'center' });
+  }
+  function renderAdmin() {
+    const g = groupById(adm.gid);
+    const body = $('#adm-body');
+    body.innerHTML = `<div class="inner">
+      <div class="sec-title"><i class="ph-fill ${g.icon}"></i><div><b>${esc(g.title)}</b><small>${esc(g.sub)}</small></div></div>
+      ${g.images.map((im, ii) => `<div class="sheet"><div class="photo" data-w="${im.w}">
+        <img src="${im.src}" alt="${esc(g.title)} 교범 사진" draggable="false">${chipHTML(g.id, ii)}</div></div>`).join('')}
+    </div>`;
+    body.scrollTop = 0;
+    watchPhotos(body);
+    renderAdminMeta();
+  }
+  function bindAdmin() {
+    $('#adm-body').addEventListener('click', e => {
+      const chip = e.target.closest('.chip'); if (!chip) return;
+      const id = chip.dataset.id;
+      if (adm.work.has(id)) adm.work.delete(id); else adm.work.add(id);
+      chip.classList.toggle('off', adm.work.has(id));
+      adm.dirty = true; renderAdminMeta();
+    });
+    $('#adm-tabs').addEventListener('click', e => { const t = e.target.closest('.tab'); if (t) { adm.gid = t.dataset.g; renderAdmin(); } });
+    $('#adm-restore').addEventListener('click', () => {
+      const g = groupById(adm.gid); let n = 0;
+      g.images.forEach(im => im.blanks.forEach(b => { if (adm.work.delete(b.id)) n++; }));
+      if (!n) { toast('이 장비에는 제외된 단어가 없습니다'); return; }
+      adm.dirty = true; renderAdmin(); toast(`${n}개 복원됨`);
+    });
+    $('#adm-save').addEventListener('click', async () => {
+      disabled = new Set(adm.work); adm.dirty = false; renderAdminMeta();
+      await saveDisabled();
+    });
+    $('#adm-back').addEventListener('click', () => {
+      if (adm.dirty && !confirm('저장하지 않은 변경이 있습니다. 버리고 나갈까요?')) return;
+      show('select'); renderSelect();
+    });
   }
 
   function startExam() {
@@ -276,6 +391,7 @@
       el.querySelector('input').style.fontSize = px + 'px';
       const c = el.querySelector('.correct'); if (c) c.style.fontSize = Math.max(10, px * 0.85) + 'px';
     });
+    $$('.chip', photo).forEach(el => { el.style.fontSize = Math.max(9, parseFloat(el.dataset.h) * scale * 0.62) + 'px'; });
   }
   function watchPhotos(root) {
     $$('.photo', root).forEach(p => { sizePhoto(p); if (ro) ro.observe(p); });
@@ -448,9 +564,10 @@
   /* ---------------- 시작 ---------------- */
   function init() {
     clearOld();
-    bindSelect(); bindExam(); bindResult();
+    bindSelect(); bindExam(); bindResult(); bindAdmin();
     renderSelect();
     show('select');
+    initFirebase(); loadDisabled();
   }
   document.addEventListener('DOMContentLoaded', init);
 })();

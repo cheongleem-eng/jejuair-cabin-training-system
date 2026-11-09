@@ -4,8 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>비상장비 TEST</title>
-  <link rel="stylesheet" href="style.css?v=1.5" />
+  <link rel="stylesheet" href="style.css?v=1.6" />
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <!-- Firebase: 관리자 모드의 "출제 제외" 목록을 모든 패드가 공유하기 위해 사용 -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="../firebase-config.js"></script>
 </head>
 <body>
 
@@ -58,6 +62,25 @@
 
       <button id="btn-start" class="btn-primary" type="button"><i class="ph-bold ph-play"></i> 시험 시작</button>
       <p class="foot">© JEJU AIR Cabin Training Team</p>
+      <button id="btn-admin" class="admin-link" type="button"><i class="ph-bold ph-gear-six"></i> 관리자 <span id="adm-badge"></span></button>
+    </div>
+  </section>
+
+  <!-- ===================== 4. 관리자: 출제 제외 설정 ===================== -->
+  <section id="view-admin" class="view">
+    <div class="exam-top glass-dark">
+      <div class="adm-head">
+        <button id="adm-back" class="btn-ghost" type="button"><i class="ph-bold ph-arrow-left"></i> 나가기</button>
+        <div class="adm-title"><b><i class="ph-fill ph-gear-six"></i> 출제 제외 설정</b><small id="adm-status">단어를 누르면 A·B·C 모든 시험에서 빠집니다</small></div>
+        <button id="adm-save" class="btn-ghost adm-save" type="button"><i class="ph-bold ph-floppy-disk"></i> 저장</button>
+      </div>
+      <div id="adm-tabs" class="exam-tabs"></div>
+    </div>
+    <div id="adm-body" class="exam-body"></div>
+    <div class="exam-bottom glass-dark adm-bottom">
+      <div class="adm-legend"><i class="chip-dot core"></i>핵심 <i class="chip-dot extra"></i>보조 <i class="chip-dot off"></i>제외됨</div>
+      <div id="adm-count" class="adm-count"></div>
+      <button id="adm-restore" class="btn-ghost" type="button"><i class="ph-bold ph-arrow-counter-clockwise"></i> 이 장비 전체 복원</button>
     </div>
   </section>
 
@@ -108,6 +131,6 @@
   <div id="toast" class="toast"></div>
 
   <script src="data.js?v=2.0"></script>
-  <script src="app.js?v=1.6"></script>
+  <script src="app.js?v=1.7"></script>
 </body>
 </html>

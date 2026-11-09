@@ -267,3 +267,33 @@ body::before {
 .type-badge.chk { background: var(--ok); }
 .exam-who .type-badge { font-size: 11px; padding: 2px 8px; }
 .result-card .type-badge { margin: 8px 0 0; }
+
+/* ---------- 관리자: 출제 제외 설정 ---------- */
+.admin-link { display: block; margin: 2px auto 0; background: none; border: none; color: rgba(255,255,255,0.5); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; padding: 6px 10px; }
+.admin-link:hover { color: #fff; }
+#adm-badge:not(:empty) { margin-left: 4px; padding: 1px 7px; border-radius: 999px; background: rgba(255,255,255,0.15); font-size: 11px; }
+#view-admin { overflow: hidden; }
+.adm-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.adm-title { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.adm-title b { font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+.adm-title small { font-size: 11px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.adm-save { background: var(--jeju-orange); border-color: var(--jeju-orange); }
+.adm-save.dirty { animation: pulse 1.2s infinite; }
+@keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(255,80,0,0.6); } 50% { box-shadow: 0 0 0 8px rgba(255,80,0,0); } }
+.adm-bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.adm-legend { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-dim); }
+.chip-dot { display: inline-block; width: 12px; height: 12px; border-radius: 3px; border: 2px solid; margin-left: 8px; }
+.chip-dot.core { border-color: #EF4444; background: #FEF2F2; } .chip-dot.extra { border-color: #3B82F6; background: #EFF6FF; } .chip-dot.off { border-color: #9CA3AF; background: #E5E7EB; }
+.adm-count { font-size: 13px; font-weight: 700; }
+.adm-count b { color: #FCA5A5; }
+/* 단어 칩: 빈칸 자리와 같은 위치, 누르면 제외/복원 */
+.chip {
+  position: absolute; display: flex; align-items: center; justify-content: center;
+  border: 1.5px solid; border-radius: 4px; background: rgba(255,255,255,0.94); cursor: pointer;
+  font-family: inherit; font-weight: 800; line-height: 1; padding: 0 2px; white-space: nowrap; overflow: hidden; z-index: 1;
+  -webkit-tap-highlight-color: transparent;
+}
+.chip.core { border-color: #EF4444; color: #B91C1C; }
+.chip.extra { border-color: #3B82F6; color: #1D4ED8; }
+.chip.off { background: #E5E7EB; border-color: #9CA3AF; color: #6B7280; text-decoration: line-through; }
+.chip:hover { z-index: 3; min-width: 4em; }
