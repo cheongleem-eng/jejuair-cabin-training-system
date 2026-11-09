@@ -1,4 +1,4 @@
-param([string]$InDir, [string]$OutDir, [int]$Scale = 3)
+﻿param([string]$InDir, [string]$OutDir, [double]$Scale = 3)
 Add-Type -AssemblyName System.Runtime.WindowsRuntime
 Add-Type -AssemblyName System.Drawing
 $null = [Windows.Media.Ocr.OcrEngine, Windows.Foundation, ContentType = WindowsRuntime]
@@ -10,13 +10,13 @@ $lang = [Windows.Media.Ocr.OcrEngine]::AvailableRecognizerLanguages | Where-Obje
 $engine = [Windows.Media.Ocr.OcrEngine]::TryCreateFromLanguage($lang)
 if (-not $engine) { throw "no ko OCR engine" }
 New-Item -ItemType Directory -Force $OutDir | Out-Null
-Get-ChildItem $InDir -Filter *.png | ForEach-Object {
+Get-ChildItem $InDir -Filter *.png | Where-Object { -not (Test-Path (Join-Path $OutDir ($_.BaseName + ".json"))) } | ForEach-Object {
   $src = [System.Drawing.Image]::FromFile($_.FullName)
   $w = $src.Width; $h = $src.Height
-  $big = New-Object System.Drawing.Bitmap ($w * $Scale), ($h * $Scale)
+  $big = New-Object System.Drawing.Bitmap ([int]($w * $Scale)), ([int]($h * $Scale))
   $g = [System.Drawing.Graphics]::FromImage($big)
   $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
-  $g.DrawImage($src, 0, 0, $w * $Scale, $h * $Scale); $g.Dispose(); $src.Dispose()
+  $g.DrawImage($src, 0, 0, [int]($w * $Scale), [int]($h * $Scale)); $g.Dispose(); $src.Dispose()
   $tmp = Join-Path $OutDir ($_.BaseName + '.big.png')
   $big.Save($tmp, [System.Drawing.Imaging.ImageFormat]::Png); $big.Dispose()
   $file = Await ([Windows.Storage.StorageFile]::GetFileFromPathAsync($tmp)) ([Windows.Storage.StorageFile])
